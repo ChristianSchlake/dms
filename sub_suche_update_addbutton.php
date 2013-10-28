@@ -14,7 +14,6 @@
 		";
 		$ergebnis = mysql_query($abfrage);
 		while($row = mysql_fetch_object($ergebnis)) {
-			/*echo "<li><label>",$row->name,"</label></li>";*/
 			$abrage_sohn="
 				SELECT DISTINCT
 					a.son,
@@ -46,7 +45,7 @@
 
 <?php
 // Abfrage Typ
-$abfrageTMP="
+	$abfrageTMP="
 	SELECT DISTINCT
 		TypName,
 		TypID
@@ -68,59 +67,68 @@ $abfrageTMP="
 
 
 	while($row = mysql_fetch_object($ergebnis))							{
-		echo "<form class=\"custom\" action=\"sub_suche_update.php\" method=\"post\">";
-		echo "<tr>";
-			// ID
-			echo "<td><label>",$row->id,"</label></td>";
-			echo "<input type=\"hidden\" name=\"id\" value=\"".$row->id."\"\>";
-			// Typ
-			echo "<td>";
-				echo "<select class=\"medium\" name=\"typ\">";				
-				foreach($listeTyp AS $typ)
-				{
-				$typName=explode("|",$typ);
-					if($typName[0]==$row->TypName){
-						echo "<option selected>",$typ,"</option>";
-					}
-					else {
-						echo "<option>",$typ,"</option>";
-					}
-				}
-				echo "</select>";
-			echo "</td>";
-			// Beschreibung
-			echo "<td><input type=\"text\" value=\"",$row->Beschreibung,"\" size=\"300\" name=\"Beschreibung\"></td>";
-			// Ordner
-			echo "<td>";
-				echo "<select class=\"medium\" name=\"ordner\">";
-				generateListOrdnerFormular(0, $row->name);
-				echo "<\select>";
-			echo "</td>";
-			// Herausgeber
-			echo "<td>";
-				echo "<select class=\"medium\" name=\"herausgeber\">";
-
-				foreach($listeHerausgeber AS $Herausgeber)
-				{
-					if($Herausgeber==$row->Herausgeber."|".$row->HerausgeberID){
-						echo "<option selected>",$Herausgeber,"</option>";
-					}
-					else {
-						echo "<option>",$Herausgeber,"</option>";
-					}
-				}
-				echo "<\select>";
-			echo "</td>";
-			// Herausgabedatum
-			echo "<td><input type=\"text\" value=\"",date("d.m.Y",strtotime($row->Herausgabedatum)),"\" name=\"herausgabedatum\"></td>";
-			// Speicherdatum
-			echo "<td><label>",date("d.m.Y",strtotime($row->Speicherdatum)),"</label></td>";
-			// Button anzeigen
-			$extension=explode(".",$row->Datei);
-			echo "<td><a class=\"tiny button round\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\">file</a></td>";
-			// Button ändern
-			echo "<td><input class=\"tiny button round\" type=\"submit\" value=\"",ändern,"\"></td>";
-		echo "</tr>";
+		echo "<form class=\"custom\" action=\"sub_suche_update.php\" method=\"post\">";		
+			echo "<div class=\"row\">";
+				echo "<div class=\"small-6 large-1 columns\">";
+					// ID				
+					echo "<label>",$row->id,"</label>";
+					echo "<input type=\"hidden\" name=\"id\" value=\"".$row->id."\"\>";
+				echo "</div>";
+				echo "<div class=\"small-6 large-1 columns\">";
+					// Typ
+					echo "<select class=\"medium\" name=\"typ\">";				
+						foreach($listeTyp AS $typ)
+						{
+							$typName=explode("|",$typ);
+							if($typName[0]==$row->TypName){
+								echo "<option selected>",$typ,"</option>";
+							}
+							else {
+								echo "<option>",$typ,"</option>";
+							}
+						}
+					echo "</select>";
+				echo "</div>";
+				echo "<div class=\"small-12 large-4 columns\">";
+					// Beschreibung
+					echo "<input type=\"text\" value=\"",$row->Beschreibung,"\" size=\"300\" name=\"Beschreibung\">";
+				echo "</div>";
+				echo "<div class=\"small-6 large-3 columns\">";
+					// Ordner
+					echo "<select class=\"medium\" name=\"ordner\">";
+						generateListOrdnerFormular(0, $row->name);
+					echo "</select>";
+					echo "<br>";	
+					// Herausgeber
+					echo "<select class=\"medium\" name=\"herausgeber\">";
+						foreach($listeHerausgeber AS $Herausgeber)
+						{
+							if($Herausgeber==$row->Herausgeber."|".$row->HerausgeberID){
+								echo "<option selected>",$Herausgeber,"</option>";
+							}
+							else {
+								echo "<option>",$Herausgeber,"</option>";
+							}
+						}
+					echo "</select>";
+				echo "</div>";
+				echo "<div class=\"small-6 large-2 columns\">";
+					// Herausgabedatum
+					echo "<input type=\"text\" value=\"",date("d.m.Y",strtotime($row->Herausgabedatum)),"\" name=\"herausgabedatum\">";
+					// Speicherdatum
+					echo "<br>";
+					echo "<label>",date("d.m.Y",strtotime($row->Speicherdatum)),"</label>";
+				echo "</div>";
+				echo "<div class=\"small-6 large-1 columns\">";
+					// Button anzeigen
+					$extension=explode(".",$row->Datei);
+					echo "<a class=\"tiny button round\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\">file</a>";
+					echo "<br>";
+					// Button ändern
+					echo "<input class=\"tiny button round\" type=\"submit\" value=\"ändern\">";
+				echo "</div>";
+				echo "<hr />";
+			echo "</div>";
 		echo "</form>";
 	}
 ?>

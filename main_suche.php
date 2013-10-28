@@ -145,157 +145,189 @@
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 <!-- Suchformular -->
 <div class="row">
-	<div class="small-12 large-12 columns">
-		<fieldset>
-			<legend>Suche</legend>
+	<fieldset>
+	<legend>Suche</legend>
+		<div class="small-12 large-12 columns">			
 			<?php
 				include("sub_suche_add_button.php");
-			?>
-		</fieldset>
-	</div>
+			?>		
+		</div>
+	</fieldset>
+</div>
 
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 <!-- Tabelle anzeigen -->
-	<div class="small-12 large-12 columns">
-		<fieldset>
-			<legend>DMS Tabelle</legend>
-			<div class="row">
-				<dl class="sub-nav">
-					<?php
-						if($editStatus==0){
-			  				echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
-		  					echo "<dd><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
-						}
-						else {
-			  				echo "<dd><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
-		  					echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
-						}
-					?>
-				</dl>
+<div class="row">
+	<fieldset>
+		<legend>DMS Tabelle</legend>
+		<div class="row">
+			<dl class="sub-nav">
+				<?php
+					if($editStatus==0){
+		  				echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
+	  					echo "<dd><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
+					}
+					else {
+		  				echo "<dd><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
+	  					echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
+					}
+				?>
+			</dl>		
+		</div>		
+		
+		<div class="row">		
+			<div class="small-6 large-1 columns">
+				<?php
+				// ID
+					if($auswahl_sortierung=="S.id" or $auswahl_sortierung=="S.id DESC") {
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button\">id</a></th>";}
+					else{
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button secondary\">id</a></th>";}
+				?>						
 			</div>
-			<div class="row">
-				<table>
-					<tr>
-						<?php
-							if($auswahl_sortierung=="S.id" or $auswahl_sortierung=="S.id DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button\">id</a></th>";}
-							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button secondary\">id</a></th>";}
-
-							if($auswahl_sortierung=="U.TypName" or $auswahl_sortierung=="U.TypName DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button\">Typ</a></th>";}
-							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button secondary\">Typ</a></th>";}
-
-							if($auswahl_sortierung=="S.Beschreibung" or $auswahl_sortierung=="S.Beschreibung DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Beschreibung\" class=\"small button\">Beschreibung</a></th>";}
-							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Beschreibung\" class=\"small button secondary\">Beschreibung</a></th>";}
-
-							if($auswahl_sortierung=="X.name" or $auswahl_sortierung=="X.name DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=X.name\" class=\"small button\">Ordner</a></th>";}
-							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=X.name\" class=\"small button secondary\">Ordner</a></th>";}
-
-							if($auswahl_sortierung=="Z.Herausgeber" or $auswahl_sortierung=="Z.Herausgeber DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=Z.Herausgeber\" class=\"small button\">Herausgeber</a></th>";}
-							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=Z.Herausgeber\" class=\"small button secondary\">Herausgeber</a></th>";}
-
-							if($auswahl_sortierung=="S.Herausgabedatum" or $auswahl_sortierung=="S.Herausgabedatum DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Herausgabedatum\" class=\"small button\">Herausgabedatum</a></th>";}
-							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Herausgabedatum\" class=\"small button secondary\">Herausgabedatum</a></th>";}
-
-							if($auswahl_sortierung=="S.Speicherdatum" or $auswahl_sortierung=="S.Speicherdatum DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Speicherdatum\" class=\"small button\">Speicherdatum</a></th>";}
-							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Speicherdatum\" class=\"small button secondary\">Speicherdatum</a></th>";}
-							?>
-							<th></th>
-					</tr>
-
+			<div class="small-6 large-1 columns">
+				<?php
+				// Typ
+					if($auswahl_sortierung=="U.TypName" or $auswahl_sortierung=="U.TypName DESC") {
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button\">Typ</a></th>";}
+					else{
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button secondary\">Typ</a></th>";}
+				?>
+			</div>							
+			<div class="small-12 large-5 columns">
+				<?php
+				// Beschreibung
+					if($auswahl_sortierung=="S.Beschreibung" or $auswahl_sortierung=="S.Beschreibung DESC") {
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Beschreibung\" class=\"small button\">Beschreibung</a></th>";}
+					else{
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Beschreibung\" class=\"small button secondary\">Beschreibung</a></th>";}
+				?>
+			</div>
+			<div class="small-6 large-3 columns">
+				<?php
+				// Ordner
+					if($auswahl_sortierung=="X.name" or $auswahl_sortierung=="X.name DESC") {
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=X.name\" class=\"small button\">Ordner</a></th>";}
+					else{
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=X.name\" class=\"small button secondary\">Ordner</a></th>";}
+				?>
+				<br>
 					<?php
-						$abfrage="
-						SELECT DISTINCT
-								S.id,
-								U.TypName,
-								S.Beschreibung,
-								S.Datei,
-								S.Speicherdatum,
-								S.Herausgabedatum,
-								Z.Herausgeber,
-								Z.HerausgeberID,
-								X.name,
-								S.Speicherdatum
-							FROM DMS AS S
-							INNER JOIN Herausgeber AS Z 
-								ON S.Herausgeber = Z.HerausgeberID
-							INNER JOIN typ AS U 
-								ON U.TypID = S.TypID																
-							INNER JOIN dir AS X 	
-								ON X.id = S.dir
-							WHERE 
-									X.name LIKE '$auswahl_Kategorie'
-								AND U.TypName LIKE '$auswahl_Typ'
-								AND S.Speicherdatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
-								AND S.Speicherdatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
-								AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
-								AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
-								AND S.Beschreibung LIKE '$auswahl_Beschreibung'
-								AND S.Herausgeber LIKE '$auswahl_Herausgeber'
-								AND S.dir LIKE '$auswahl_ordner'
-								AND S.id LIKE '$auswahl_id'
-								ORDER BY $auswahl_sortierung
-						";
-						$ergebnis = mysql_query($abfrage);
-						$menge = mysql_num_rows($ergebnis);						
-						$abfrage=$abfrage."LIMIT $startPage, $maxEintraegeProSite";					
-						$ergebnis = mysql_query($abfrage);
-						if($editStatus==0){
-							while($row = mysql_fetch_object($ergebnis))
-							{
-								$extension=explode(".",$row->Datei);
-								echo "<tr>";
-									echo "<td>",$row->id,"</td>";
-									echo "<td>",$row->TypName,"</td>";
-									echo "<td>",$row->Beschreibung,"</td>";
-									echo "<td>",$row->name,"</td>";
-									echo "<td>",$row->Herausgeber,"</td>";
-									echo "<td>",date("d.m.Y",strtotime($row->Herausgabedatum)),"</td>";
-									echo "<td>",date("d.m.Y",strtotime($row->Speicherdatum)),"</td>";
-									echo "<td><a href=\"upload/",$row->id,".",$extension[count($extension)-1],"\">file</a></td>";
-								echo "</tr>";
+				// Herausgeber
+					if($auswahl_sortierung=="Z.Herausgeber" or $auswahl_sortierung=="Z.Herausgeber DESC") {
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=Z.Herausgeber\" class=\"small button\">Herausgeber</a></th>";}
+					else{
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=Z.Herausgeber\" class=\"small button secondary\">Herausgeber</a></th>";}
+					?>
+			</div>
+			<div class="small-6 large-2 columns">
+				<?php
+				// Herausgabedatum
+					if($auswahl_sortierung=="S.Herausgabedatum" or $auswahl_sortierung=="S.Herausgabedatum DESC") {
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Herausgabedatum\" class=\"small button\">Herausgabedatum</a></th>";}
+					else{
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Herausgabedatum\" class=\"small button secondary\">Herausgabedatum</a></th>";}
+				?>
+				<br>
+				<?php
+				// Speicherdatum
+					if($auswahl_sortierung=="S.Speicherdatum" or $auswahl_sortierung=="S.Speicherdatum DESC") {
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Speicherdatum\" class=\"small button\">Speicherdatum</a></th>";}
+					else{
+						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Speicherdatum\" class=\"small button secondary\">Speicherdatum</a></th>";}
+				?>													
+			</div>
+			<hr />
+		</div>
+		<?php
+			$abfrage="
+			SELECT DISTINCT
+					S.id,
+					U.TypName,
+					S.Beschreibung,
+					S.Datei,
+					S.Speicherdatum,
+					S.Herausgabedatum,
+					Z.Herausgeber,
+					Z.HerausgeberID,
+					X.name,
+					S.Speicherdatum
+				FROM DMS AS S
+				INNER JOIN Herausgeber AS Z 
+					ON S.Herausgeber = Z.HerausgeberID
+				INNER JOIN typ AS U 
+					ON U.TypID = S.TypID																
+				INNER JOIN dir AS X 	
+					ON X.id = S.dir
+				WHERE 
+						X.name LIKE '$auswahl_Kategorie'
+					AND U.TypName LIKE '$auswahl_Typ'
+					AND S.Speicherdatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
+					AND S.Speicherdatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
+					AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
+					AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
+					AND S.Beschreibung LIKE '$auswahl_Beschreibung'
+					AND S.Herausgeber LIKE '$auswahl_Herausgeber'
+					AND S.dir LIKE '$auswahl_ordner'
+					AND S.id LIKE '$auswahl_id'
+					ORDER BY $auswahl_sortierung
+			";
+			$ergebnis = mysql_query($abfrage);
+			$menge = mysql_num_rows($ergebnis);						
+			$abfrage=$abfrage."LIMIT $startPage, $maxEintraegeProSite";					
+			$ergebnis = mysql_query($abfrage);
+			if($editStatus==0){
+				while($row = mysql_fetch_object($ergebnis))
+				{
+					$extension=explode(".",$row->Datei);
+					echo "<div class=\"row\">";
+						echo "<div class=\"small-6 large-1 columns\">";
+							echo "<p>",$row->id,"</p>";
+						echo "</div>";
+						echo "<div class=\"small-6 large-1 columns\">";
+							echo "<p>",$row->TypName,"</p>";
+						echo "</div>";
+						echo "<div class=\"small-12 large-5 columns\">";
+							echo "<span class=\"radius label prefix\">",$row->Beschreibung,"</span>";
+						echo "</div>";
+						echo "<div class=\"small-6 large-3 columns\">";
+								echo "<p>",$row->name,"</p>";
+								echo "<br>";
+								echo "<p>",$row->Herausgeber,"</p>";
+						echo "</div>";
+						echo "<div class=\"small-6 large-2 columns\">";
+								echo "<p>",date("d.m.Y",strtotime($row->Herausgabedatum)),"</p>";
+								echo "<br>";
+								echo "<p>",date("d.m.Y",strtotime($row->Speicherdatum)),"</p>";
+						echo "</div>";
+						echo "<hr />";
+					echo "</div>";
+				}
+			}
+			else {
+				include("sub_suche_update_addbutton.php");
+		
+			}
+		?>
+		<div class="row">
+			<div class="pagination-centered">
+				<ul class="pagination">		
+					<?php
+						echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage-$maxEintraegeProSite,"\">&laquo;</a></li>";						
+						for ($i=0; $i < $menge; $i=$i+$maxEintraegeProSite) { 								
+							if($i>=$startPage and $i <$startPage+$maxEintraegeProSite){
+								echo "<li class=\"current\"><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";							
+							}
+							else{
+								echo "<li><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
 							}
 						}
-						else {
-							include("sub_suche_update_addbutton.php");
-
-						}
+						echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage+$maxEintraegeProSite,"\">&raquo;</a></li>";							
 					?>
-				</table>
-			</div>					
-			<div class="row">
-				<!--Pagination hinzufügen-->
-				<div class="pagination-centered">
-					<ul class="pagination">		
-						<?php
-							echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage-$maxEintraegeProSite,"\">&laquo;</a></li>";						
-							for ($i=0; $i < $menge; $i=$i+$maxEintraegeProSite) { 								
-								if($i>=$startPage and $i <$startPage+$maxEintraegeProSite){
-									echo "<li class=\"current\"><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";							
-								}
-								else{
-									echo "<li><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
-								}
-							}
-							echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage+$maxEintraegeProSite,"\">&raquo;</a></li>";							
-						?>
-					</ul>
-				</div>
+				</ul>
 			</div>
-		</fieldset>
-	</div>
+		</div>
+	</fieldset>
 </div>
 
 <?php
