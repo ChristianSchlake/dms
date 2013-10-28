@@ -87,6 +87,7 @@
 			<li class="has-dropdown"><a href="#">Navigation</a>
 				<ul class="dropdown">
 					<li><a href=main_verwalte_Herausgeber.php>Herausgeber verwalten</a></li>
+					<li><a href=main_verwalte_Typ.php>Typ verwalten</a></li>								
 				</ul>
 			</li>
 			<!-- Typ -->
@@ -94,10 +95,10 @@
 			<li class="has-dropdown"><a href="main_suche.php">Typ</a>
 				<ul class="dropdown">
 					<?php		
-						$abfrage="SELECT DISTINCT typ FROM DMS ORDER BY typ";
+						$abfrage="SELECT DISTINCT typName FROM typ ORDER BY typName";
 						$ergebnis = mysql_query($abfrage);
 						while($row = mysql_fetch_object($ergebnis)) {
-							echo "<li><a href=\"main_suche.php?Typ=",$row->typ,"\">",$row->typ,"</a></li>";
+							echo "<li><a href=\"main_suche.php?Typ=",$row->typName,"\">",$row->typName,"</a></li>";
 						}
 
 					?>
@@ -176,10 +177,10 @@
 							else{
 								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button secondary\">id</a></th>";}
 
-							if($auswahl_sortierung=="S.typ" or $auswahl_sortierung=="S.typ DESC") {
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.typ\" class=\"small button\">Typ</a></th>";}
+							if($auswahl_sortierung=="U.TypName" or $auswahl_sortierung=="U.TypName DESC") {
+								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button\">Typ</a></th>";}
 							else{
-								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.typ\" class=\"small button secondary\">Typ</a></th>";}
+								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button secondary\">Typ</a></th>";}
 
 							if($auswahl_sortierung=="S.Beschreibung" or $auswahl_sortierung=="S.Beschreibung DESC") {
 								echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Beschreibung\" class=\"small button\">Beschreibung</a></th>";}
@@ -213,7 +214,7 @@
 						$abfrage="
 						SELECT DISTINCT
 								S.id,
-								S.Typ,
+								U.TypName,
 								S.Beschreibung,
 								S.Datei,
 								S.Speicherdatum,
@@ -225,11 +226,13 @@
 							FROM DMS AS S
 							INNER JOIN Herausgeber AS Z 
 								ON S.Herausgeber = Z.HerausgeberID
+							INNER JOIN typ AS U 
+								ON U.TypID = S.TypID																
 							INNER JOIN dir AS X 	
 								ON X.id = S.dir
 							WHERE 
 									X.name LIKE '$auswahl_Kategorie'
-								AND S.Typ LIKE '$auswahl_Typ'
+								AND U.TypName LIKE '$auswahl_Typ'
 								AND S.Speicherdatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
 								AND S.Speicherdatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
 								AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
@@ -249,7 +252,7 @@
 								$extension=explode(".",$row->Datei);
 								echo "<tr>";
 									echo "<td>",$row->id,"</td>";
-									echo "<td>",$row->Typ,"</td>";
+									echo "<td>",$row->TypName,"</td>";
 									echo "<td>",$row->Beschreibung,"</td>";
 									echo "<td>",$row->name,"</td>";
 									echo "<td>",$row->Herausgeber,"</td>";

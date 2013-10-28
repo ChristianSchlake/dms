@@ -48,17 +48,13 @@
 // Abfrage Typ
 $abfrageTMP="
 	SELECT DISTINCT
-		S.Typ
-	FROM DMS AS S
-	INNER JOIN Herausgeber AS Z 
-		ON S.Herausgeber = Z.HerausgeberID
-	INNER JOIN dir AS Y 	
-		ON Y.id = S.dir
-";
+		TypName,
+		TypID
+	FROM typ";
 	$ergebnisTMP = mysql_query($abfrageTMP);
 	$i=0;
 	while($rowTMP = mysql_fetch_object($ergebnisTMP)) {
-		$listeTyp[$i]=$rowTMP->Typ;
+		$listeTyp[$i]=$rowTMP->TypName."|".$rowTMP->TypID;
 		$i++;
 	}
 // Herausgeber
@@ -76,17 +72,18 @@ $abfrageTMP="
 		echo "<tr>";
 			// ID
 			echo "<td><label>",$row->id,"</label></td>";
+			echo "<input type=\"hidden\" name=\"id\" value=\"".$row->id."\"\>";
 			// Typ
 			echo "<td>";
-				echo "<select class=\"medium\" name=\"typ\">";
-				
+				echo "<select class=\"medium\" name=\"typ\">";				
 				foreach($listeTyp AS $typ)
 				{
-					if($typ==$row->Typ){
-						echo "<option selected>",$typ,"|",$row->id,"</option>";
+				$typName=explode("|",$typ);
+					if($typName[0]==$row->TypName){
+						echo "<option selected>",$typ,"</option>";
 					}
 					else {
-						echo "<option>",$typ,"|",$row->id,"</option>";
+						echo "<option>",$typ,"</option>";
 					}
 				}
 				echo "</select>";

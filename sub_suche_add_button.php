@@ -17,15 +17,18 @@
 				if($auswahl_Typ!="%"){echo "<li><a href=\"main_suche.php?Typ=%\">&rarr; reset </a></li>";}
 				$abfrage="
 					SELECT DISTINCT
-						S.Typ
+						U.TypName
 					FROM DMS AS S
 					INNER JOIN Herausgeber AS Z 
 						ON S.Herausgeber = Z.HerausgeberID
 					INNER JOIN dir AS Y 	
 						ON Y.id = S.dir
+					INNER JOIN typ AS U 	
+						ON U.TypID = S.TypID						
+						
 					WHERE 
 							Y.id LIKE '$auswahl_ordner'
-						AND S.Typ LIKE '$auswahl_Typ'
+						AND U.TypName LIKE '$auswahl_Typ'
 						AND S.Speicherdatum Like '$auswahl_Datum'
 						AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
 						AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
@@ -35,7 +38,7 @@
 				";
 				$ergebnis = mysql_query($abfrage);
 				while($row = mysql_fetch_object($ergebnis)) {
-					echo "<li><a href=\"main_suche.php?Typ=",utf8_encode($row->Typ),"\">",utf8_encode($row->Typ),"</a></li>";
+					echo "<li><a href=\"main_suche.php?Typ=",utf8_encode($row->TypName),"\">",utf8_encode($row->TypName),"</a></li>";
 				}				
 			?>
 		</ul>
@@ -69,9 +72,11 @@
 					ON S.Herausgeber = Z.HerausgeberID
 				INNER JOIN dir AS Y 	
 					ON Y.id = S.dir
+				INNER JOIN typ AS U 	
+					ON U.TypID = S.TypID					
 				WHERE 
 						Y.id LIKE '$auswahl_ordner'
-					AND S.Typ LIKE '$auswahl_Typ'
+					AND U.TypName LIKE '$auswahl_Typ'
 					AND S.Speicherdatum Like '$auswahl_Datum'
 					AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
 					AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
@@ -115,9 +120,11 @@
 						ON S.Herausgeber = Z.HerausgeberID
 					INNER JOIN dir AS Y 	
 						ON Y.id = S.dir
+					INNER JOIN typ AS U 	
+						ON U.TypID = S.TypID						
 					WHERE 
 							Y.id LIKE '$auswahl_ordner'
-						AND S.Typ LIKE '$auswahl_Typ'
+						AND U.TypName LIKE '$auswahl_Typ'
 						AND S.Speicherdatum Like '$auswahl_Datum'
 						AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
 						AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')

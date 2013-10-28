@@ -28,42 +28,42 @@
 <?php
 /*-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -*/
 /* Übergabe auslesen und in die Session schreiben */
-	if(isset($_GET['edit_herausgeber']))
+	if(isset($_GET['edit_typ']))
 	{
-	$_SESSION['edit_herausgeber']=$_GET['edit_herausgeber'];
+	$_SESSION['edit_typ']=$_GET['edit_typ'];
 	}
 
-	if(isset($_GET['edit_herausgeber_editStatus']))
+	if(isset($_GET['edit_typ_editStatus']))
 	{
-	$_SESSION['edit_herausgeber_editStatus']=$_GET['edit_herausgeber_editStatus'];
+	$_SESSION['edit_typ_editStatus']=$_GET['edit_typ_editStatus'];
 	}
 
-	if (isset($_GET['edit_herausgeber_changeID']))	{
-		$edit_herausgeber_changeID=$_GET['edit_herausgeber_changeID'];
+	if (isset($_GET['edit_typ_changeID']))	{
+		$edit_typ_changeID=$_GET['edit_typ_changeID'];
 	}
 
-	if (isset($_GET['edit_herausgeber_changeHerausgeber']))	{
-		$edit_herausgeber_changeHerausgeber=$_GET['edit_herausgeber_changeHerausgeber'];
+	if (isset($_GET['edit_typ_changetyp']))	{
+		$edit_typ_changetyp=$_GET['edit_typ_changetyp'];
 	}
 
-	if (isset($_GET['edit_herausgeber_delete']))	{
-		$edit_herausgeber_changeHerausgeber=$_GET['edit_herausgeber_delete'];
+	if (isset($_GET['edit_typ_delete']))	{
+		$edit_typ_changetyp=$_GET['edit_typ_delete'];
 	}
 
 /*-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -*/
 /* Werte aus session in Variablen schreiben */
-	if (!isset($_SESSION['edit_herausgeber']))	{
-		$edit_herausgeber="%";
+	if (!isset($_SESSION['edit_typ']))	{
+		$edit_typ="%";
 	}	
 	else {
-		$edit_herausgeber=$_SESSION['edit_herausgeber'];
+		$edit_typ=$_SESSION['edit_typ'];
 	}
 
-	if (!isset($_SESSION['edit_herausgeber_editStatus']))	{
-		$edit_herausgeber_editStatus=0;
+	if (!isset($_SESSION['edit_typ_editStatus']))	{
+		$edit_typ_editStatus=0;
 	}
 	else {
-		$edit_herausgeber_editStatus=$_SESSION['edit_herausgeber_editStatus'];
+		$edit_typ_editStatus=$_SESSION['edit_typ_editStatus'];
 	}
 ?>
 
@@ -72,7 +72,7 @@
 <nav class="top-bar" data-options="is_hover:true">
 	<ul class="title-area">
 		<li class="name">
-			<h1><a href="main_verwalte_Herausgeber.php?edit_herausgeber=%">Herausgeber verwalten</a></h1>
+			<h1><a href="main_verwalte_Typ.php?edit_typ=%">Typ verwalten</a></h1>
 		</li>
 		<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
 	</ul>
@@ -83,13 +83,13 @@
 			<li class="has-dropdown"><a href="#">Navigation</a>
 				<ul class="dropdown">
 					<li><a href=main_suche.php>DMS</a></li>
-					<li><a href=main_verwalte_Typ.php>Typ verwalten</a></li>					
+					<li><a href=main_verwalte_Herausgeber.php>Herausgeber verwalten</a></li>					
 				</ul>
 			</li>
 		</ul>
 		<ul class="right">
 			<li class="has-form">
-				<a class="button round" href="sub_verwalte_Herausgeber_add.php">Neuer Herausgeber</a>
+				<a class="button round" href="sub_verwalte_Typ_add.php">Neuer Typ</a>
 			</li>
 		</ul>
 	</section>
@@ -101,15 +101,15 @@
 		<fieldset>
 			<legend>Suche</legend>
 				<div class="row collapse">
-					<form action="main_verwalte_Herausgeber.php" method="get">
+					<form action="main_verwalte_Typ.php" method="get">
 						<div class="row collapse">
 							<div class="small-8 columns">
-								<input type="text" placeholder="Suche nach dem Herausgeber" name="edit_herausgeber">
+								<input type="text" placeholder="Suche nach dem typ" name="edit_typ">
 							</div>
 								<div class="small-4 columns">
 								<?php
-									if($edit_herausgeber!="%") {
-										echo "<input class=\"button prefix\" value=\"",$edit_herausgeber,"\" type=\"Submit\">";
+									if($edit_typ!="%") {
+										echo "<input class=\"button prefix\" value=\"",$edit_typ,"\" type=\"Submit\">";
 									}
 									else {
 										echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
@@ -126,12 +126,12 @@
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 <!-- Daten aktualisieren -->
 <?php
-	if (isset($edit_herausgeber_changeID) and !isset($_GET['edit_herausgeber_delete'])){
-		$abfrage="UPDATE Herausgeber SET Herausgeber=\"".$edit_herausgeber_changeHerausgeber."\" WHERE HerausgeberID=".$edit_herausgeber_changeID;
+	if (isset($edit_typ_changeID) and !isset($_GET['edit_typ_delete'])){
+		$abfrage="UPDATE typ SET TypName=\"".$edit_typ_changetyp."\" WHERE TypID=".$edit_typ_changeID;
 		mysql_query($abfrage);
 	}
-	if (isset($_GET['edit_herausgeber_delete'])){
-		$abfrage="DELETE FROM Herausgeber WHERE HerausgeberID=".$edit_herausgeber_changeID;
+	if (isset($_GET['edit_typ_delete'])){
+		$abfrage="DELETE FROM typ WHERE TypID=".$edit_typ_changeID;
 		mysql_query($abfrage);
 	}
 ?>
@@ -144,13 +144,13 @@
 			<div class="row">
 				<dl class="sub-nav">
 					<?php
-						if($edit_herausgeber_editStatus==0){
-			  				echo "<dd class=\"active\"><a href=\"main_verwalte_Herausgeber.php?edit_herausgeber_editStatus=0\">Show</a></dd>";
-		  					echo "<dd><a href=\"main_verwalte_Herausgeber.php?edit_herausgeber_editStatus=1\">Edit</a></dd>";
+						if($edit_typ_editStatus==0){
+			  				echo "<dd class=\"active\"><a href=\"main_verwalte_Typ.php?edit_typ_editStatus=0\">Show</a></dd>";
+		  					echo "<dd><a href=\"main_verwalte_Typ.php?edit_typ_editStatus=1\">Edit</a></dd>";
 						}
 						else {
-			  				echo "<dd><a href=\"main_verwalte_Herausgeber.php?edit_herausgeber_editStatus=0\">Show</a></dd>";
-		  					echo "<dd class=\"active\"><a href=\"main_verwalte_Herausgeber.php?edit_herausgeber_editStatus=1\">Edit</a></dd>";
+			  				echo "<dd><a href=\"main_verwalte_Typ.php?edit_typ_editStatus=0\">Show</a></dd>";
+		  					echo "<dd class=\"active\"><a href=\"main_verwalte_Typ.php?edit_typ_editStatus=1\">Edit</a></dd>";
 						}
 					?>
 				</dl>
@@ -159,45 +159,45 @@
 				<table>
 					<tr>
 						<td>ID</td>
-						<td>Herausgeber</td>
+						<td>typ</td>
 						<th></th>
 					</tr>
 
 					<?php
 						$abfrage="
 						SELECT DISTINCT
-								HerausgeberID,
-								Herausgeber
-							FROM Herausgeber
+								TypID,
+								TypName
+							FROM typ
 							WHERE 
-								Herausgeber LIKE '$edit_herausgeber'
-							ORDER BY Herausgeber
+								TypName LIKE '$edit_typ'
+							ORDER BY TypName
 						";
 					
 						$ergebnis = mysql_query($abfrage);
 
-						if($edit_herausgeber_editStatus==0){
+						if($edit_typ_editStatus==0){
 							while($row = mysql_fetch_object($ergebnis))
 							{
 								echo "<tr>";
-									echo "<td>",$row->HerausgeberID,"</td>";
-									echo "<td>",$row->Herausgeber,"</td>";
+									echo "<td>",$row->TypID,"</td>";
+									echo "<td>",$row->TypName,"</td>";
 								echo "</tr>";
 							}
 						}
 						else {
 							while($row = mysql_fetch_object($ergebnis))							{
-								echo "<form class=\"custom\" action=\"main_verwalte_Herausgeber.php\" method=\"get\">";
+								echo "<form class=\"custom\" action=\"main_verwalte_Typ.php\" method=\"get\">";
 									echo "<tr>";
 										// ID
-										echo "<td><label>",$row->HerausgeberID,"</label></td>";
-										echo "<input type=\"hidden\" name=\"edit_herausgeber_changeID\" value=\"".$row->HerausgeberID."\"\>";
-										// Herausgeber
-										echo "<td><input type=\"text\" value=\"",$row->Herausgeber,"\" size=\"300\" name=\"edit_herausgeber_changeHerausgeber\"></td>";
+										echo "<td><label>",$row->TypID,"</label></td>";
+										echo "<input type=\"hidden\" name=\"edit_typ_changeID\" value=\"".$row->TypID."\"\>";
+										// typ
+										echo "<td><input type=\"text\" value=\"",$row->TypName,"\" size=\"300\" name=\"edit_typ_changetyp\"></td>";
 										// Button ändern
 										echo "<td><input class=\"tiny button round\" type=\"submit\" value=\"",ändern,"\"></td>";
 										// Button löschen
-										echo "<td><input class=\"tiny button round\" type=\"submit\" name=\"edit_herausgeber_delete\" value=\"",löschen,"\"></td>";
+										echo "<td><input class=\"tiny button round\" type=\"submit\" name=\"edit_typ_delete\" value=\"",löschen,"\"></td>";
 									echo "</tr>";
 								echo "</form>";
 							}

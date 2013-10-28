@@ -61,11 +61,15 @@ if(isset($_POST['herausgabedatum']))
 	$herausgabedatum=$_POST['herausgabedatum'];
 	}
 
+if(isset($_POST['id']))
+	{
+	$id=$_POST['id'];
+	}
+
 if(isset($Typ))
 	{
 	$idArray=explode("|",$Typ);
-	$id=$idArray[1];
-	$Typ=$idArray[0];
+	$Typ=$idArray[1];
 	}
 ?>
 
@@ -77,21 +81,21 @@ if(isset($Typ))
 
 <body>
 	<?php
-		echo "<h1>",$Typ,"</h1><br>";
+/*		echo "<h1>",$Typ,"</h1><br>";
 		echo "<h1>",$Beschreibung,"</h1><br>";
 		echo "<h1>",$ordner,"</h1><br>";
 		echo "<h1>",$herausgeber,"</h1><br>";
 		echo "<h1>",$herausgabedatum,"</h1>";
 		echo "<h1>",$id,"</h1><br>";
-
-		$abfrage="UPDATE DMS SET dir=".$ordner.",Typ=\"".$Typ."\",Beschreibung=\"".$Beschreibung."\",Herausgeber=".$herausgeber.",Herausgabedatum=STR_TO_DATE('".$herausgabedatum."', '%d.%m.%Y') WHERE id=".$id;
+*/
+		$abfrage="UPDATE DMS SET dir=".$ordner.",TypID=".$Typ.",Beschreibung=\"".$Beschreibung."\",Herausgeber=".$herausgeber.",Herausgabedatum=STR_TO_DATE('".$herausgabedatum."', '%d.%m.%Y') WHERE id=".$id;
 		echo "<h1>",$abfrage,"</h1>";
-//		mysql_query($abfrage);
+		mysql_query($abfrage);
 		echo "<p>",$abfrage,"</p>";
 	?>
 
 </body>
 
 <?php
-//	header("Location: main_suche.php");
+	header("Location: main_suche.php");
 ?>;
