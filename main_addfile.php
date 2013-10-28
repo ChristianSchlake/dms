@@ -22,8 +22,6 @@
 <body>
 
 
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Eingabeformular -->
 <nav class="top-bar" data-options="is_hover:true">
 	<ul class="title-area">
 		<li class="name">
@@ -41,18 +39,18 @@
 	</section>
 </nav>
 
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Eingabeformular -->
-<div class="row">
-	<div class="small-12 large-12 columns">
-		<fieldset>
-			<legend>Eingabeformular</legend>
-			<?php
-				include("sub_addfile_add_button.php");
-			?>
-		</fieldset>
+<Eingabeformular>
+	<div class="row">
+		<div class="small-12 large-12 columns">
+			<fieldset>
+				<legend>Eingabeformular</legend>
+				<?php
+					include("sub_addfile_add_button.php");
+				?>
+			</fieldset>
+		</div>
 	</div>
-</div>
+</Eingabeformular>
 
 
 <?php
