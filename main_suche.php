@@ -23,6 +23,11 @@
 </head>
 
 <body>
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->
+<!-- Einstellungen -->
+<?php
+	$maxEintraegeProSite=10;
+?>
 
 <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->
 <!-- Functions -->
@@ -243,9 +248,10 @@
 								AND S.id LIKE '$auswahl_id'
 								ORDER BY $auswahl_sortierung
 						";
-					
 						$ergebnis = mysql_query($abfrage);
-
+						$menge = mysql_num_rows($ergebnis);						
+						$abfrage=$abfrage."LIMIT $startPage, $maxEintraegeProSite";					
+						$ergebnis = mysql_query($abfrage);
 						if($editStatus==0){
 							while($row = mysql_fetch_object($ergebnis))
 							{
@@ -268,6 +274,25 @@
 						}
 					?>
 				</table>
+			</div>					
+			<div class="row">
+				<!--Pagination hinzufügen-->
+				<div class="pagination-centered">
+					<ul class="pagination">		
+						<?php
+							echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage-$maxEintraegeProSite,"\">&laquo;</a></li>";						
+							for ($i=0; $i < $menge; $i=$i+$maxEintraegeProSite) { 								
+								if($i>=$startPage and $i <$startPage+$maxEintraegeProSite){
+									echo "<li class=\"current\"><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";							
+								}
+								else{
+									echo "<li><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
+								}
+							}
+							echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage+$maxEintraegeProSite,"\">&raquo;</a></li>";							
+						?>
+					</ul>
+				</div>
 			</div>
 		</fieldset>
 	</div>

@@ -16,5 +16,6 @@ session_start();
 	$_SESSION['auswahl_Datum']="%";
 	$_SESSION['sortierung']="S.id DESC";
 	$_SESSION['editStatus']=0;
+	$_SESSION['startPage']=0;	
 	header("Location: main_suche.php");
 ?>

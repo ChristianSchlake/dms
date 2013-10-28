@@ -58,6 +58,11 @@
 	$_SESSION['editStatus']=$_GET['editStatus'];
 	}
 
+	if(isset($_GET['startPage']))
+	{
+	$_SESSION['startPage']=$_GET['startPage'];
+	}
+
 /*-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -*/
 /* Werte aus session in Variablen schreiben */
 	if (!isset($_SESSION['auswahl_ordner']))	{
@@ -149,5 +154,12 @@
 	}
 	else {
 		$editStatus=$_SESSION['editStatus'];
+	}
+	
+	if (!isset($_SESSION['startPage']))	{
+		$startPage=0;
+	}
+	else {
+		$startPage=$_SESSION['startPage'];
 	}
 ?>
