@@ -185,7 +185,7 @@
 						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button secondary\">id</a></th>";}
 				?>						
 			</div>
-			<div class="small-6 large-1 columns">
+			<div class="small-6 large-2 columns">
 				<?php
 				// Typ
 					if($auswahl_sortierung=="U.TypName" or $auswahl_sortierung=="U.TypName DESC") {
@@ -194,7 +194,7 @@
 						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button secondary\">Typ</a></th>";}
 				?>
 			</div>							
-			<div class="small-12 large-5 columns">
+			<div class="small-12 large-4 columns">
 				<?php
 				// Beschreibung
 					if($auswahl_sortierung=="S.Beschreibung" or $auswahl_sortierung=="S.Beschreibung DESC") {
@@ -284,10 +284,10 @@
 						echo "<div class=\"small-6 large-1 columns\">";
 							echo "<p>",$row->id,"</p>";
 						echo "</div>";
-						echo "<div class=\"small-6 large-1 columns\">";
+						echo "<div class=\"small-6 large-2 columns\">";
 							echo "<p>",$row->TypName,"</p>";
 						echo "</div>";
-						echo "<div class=\"small-12 large-5 columns\">";
+						echo "<div class=\"small-12 large-4 columns\">";
 							echo "<a href=\"upload/",$row->id,".",$extension[count($extension)-1],"\">",$row->Beschreibung,"</a>";
 						echo "</div>";
 						echo "<div class=\"small-6 large-3 columns\">";

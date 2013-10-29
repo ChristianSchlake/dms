@@ -2,7 +2,9 @@
 <!-- Variablen einlesen-->
 <?php
 	$auswahl_typ=$_POST['typ'];
-
+	$auswahl_typID=explode("|",$auswahl_typ);
+	$auswahl_typID=$auswahl_typID[1];
+	
 	$auswahl_ordner=$_POST['ordner'];
 	$auswahl_ordnerID=explode("|",$auswahl_ordner);
 	$auswahl_ordnerID=$auswahl_ordnerID[1];
@@ -101,7 +103,7 @@
 			$extension=$path_parts['extension'];
 			$datei="upload/".$MaxID.".".$extension;
 			move_uploaded_file($_FILES['userfile']['tmp_name'], $datei);
-			$eintragen = mysql_query("INSERT INTO DMS (id,Typ,dir,Herausgeber,Herausgabedatum,Beschreibung,Kategorie,Datei) VALUES (".$MaxID.",\"".$auswahl_typ."\",".$auswahl_ordnerID.",".$auswahl_herausgeberID.",STR_TO_DATE('".$auswahl_herausgabedatum."', '%d.%m.%Y'),\"".$auswahl_beschreibung."\",".$auswahl_ordnerID.",\"".$_FILES['userfile']['name']."\")");
+			$eintragen = mysql_query("INSERT INTO DMS (id,typID,dir,Herausgeber,Herausgabedatum,Beschreibung,Kategorie,Datei) VALUES (".$MaxID.",\"".$auswahl_typID."\",".$auswahl_ordnerID.",".$auswahl_herausgeberID.",STR_TO_DATE('".$auswahl_herausgabedatum."', '%d.%m.%Y'),\"".$auswahl_beschreibung."\",".$auswahl_ordnerID.",\"".$_FILES['userfile']['name']."\")");
 			// prüfen ob alles eingetragen wurde
 			$MaxID2=mysql_query("SELECT MAX(id) FROM DMS");
 			$MaxID2=mysql_fetch_array($MaxID2, MYSQL_BOTH);
@@ -129,21 +131,14 @@
 			<select class="medium" name="typ">
 				<?php
 					$abfrage="
-						SELECT DISTINCT
-							S.Typ
-						FROM DMS AS S
-						INNER JOIN Herausgeber AS Z 
-							ON S.Herausgeber = Z.HerausgeberID
-						INNER JOIN dir AS Y 	
-							ON Y.id = S.dir
-					";
+						SELECT DISTINCT TypName, TypID FROM typ ORDER BY TypName";
 					$ergebnis = mysql_query($abfrage);
 					while($row = mysql_fetch_object($ergebnis)) {
-						if($row->Typ==$auswahl_typ){						
-							echo "<option selected>",$row->Typ,"</option>";
+						if($row->TypName==$auswahl_typ){						
+							echo "<option selected>",$row->TypName,"|",$row->TypID,"</option>";
 						}
 						else {
-							echo "<option>",$row->Typ,"</option>";
+							echo "<option>",$row->TypName,"|",$row->TypID,"</option>";
 						}
 					}				
 				?>

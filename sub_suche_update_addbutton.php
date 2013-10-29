@@ -74,7 +74,7 @@
 					echo "<label>",$row->id,"</label>";
 					echo "<input type=\"hidden\" name=\"id\" value=\"".$row->id."\"\>";
 				echo "</div>";
-				echo "<div class=\"small-6 large-1 columns\">";
+				echo "<div class=\"small-6 large-2 columns\">";
 					// Typ
 					echo "<select class=\"medium\" name=\"typ\">";				
 						foreach($listeTyp AS $typ)
@@ -89,7 +89,7 @@
 						}
 					echo "</select>";
 				echo "</div>";
-				echo "<div class=\"small-12 large-4 columns\">";
+				echo "<div class=\"small-12 large-3 columns\">";
 					// Beschreibung
 					echo "<input type=\"text\" value=\"",$row->Beschreibung,"\" size=\"300\" name=\"Beschreibung\">";
 				echo "</div>";
