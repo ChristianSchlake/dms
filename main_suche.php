@@ -288,7 +288,7 @@
 							echo "<p>",$row->TypName,"</p>";
 						echo "</div>";
 						echo "<div class=\"small-12 large-5 columns\">";
-							echo "<span class=\"radius label prefix\">",$row->Beschreibung,"</span>";
+							echo "<p class=\"radius label prefix\">",$row->Beschreibung,"</p>";
 						echo "</div>";
 						echo "<div class=\"small-6 large-3 columns\">";
 								echo "<p>",$row->name,"</p>";
