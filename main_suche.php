@@ -288,7 +288,11 @@
 							echo "<p>",$row->TypName,"</p>";
 						echo "</div>";
 						echo "<div class=\"small-12 large-5 columns\">";
+<<<<<<< HEAD
 							echo "<a href=\"upload/",$row->id,".",$extension[count($extension)-1],"\">",$row->Beschreibung,"</a>";
+=======
+							echo "<p class=\"radius label prefix\">",$row->Beschreibung,"</p>";
+>>>>>>> 3b4740f1d34950db449e510bedddd73d296f498d
 						echo "</div>";
 						echo "<div class=\"small-6 large-3 columns\">";
 								echo "<p>",$row->name,"</p>";
