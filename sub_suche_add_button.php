@@ -108,7 +108,7 @@
 				echo "<a href=\"#\" data-dropdown=\"drop3\" class=\"tiny button dropdown secondary\">Herausgeber</a>";
 			}
 		?>
-		<ul id="drop3" class="f-dropdown">
+		<ul id="drop3" class="f-dropdown" data-dropdown-content>
 			<?php
 				if($auswahl_Herausgeber!="%"){echo "<li><a href=\"main_suche.php?herausgeber=%\">&rarr; reset </a></li>";}
 				$abfrage="

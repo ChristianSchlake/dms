@@ -10,20 +10,24 @@
 	<link rel="stylesheet" href="css/foundation.css">
 
 	<script src="/js/vendor/custom.modernizr.js"></script>
-	<script>
+	<!--script>
 		document.write('<script src=' +
 		('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
 		'.js><\/script>')
-	</script>
+	</script-->
 
 
 </head>
+	<script src="/js/vendor/jquery.js"></script>
 
 <body>
 
 
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 <!-- Navigationsleiste anzeigen -->
+
+
+
 <nav class="top-bar" data-options="is_hover:true">
 	<ul class="title-area">
 		<li class="name">
@@ -101,7 +105,12 @@
 <?php
 	mysql_close($verbindung);
 ?>
-	<script src="js/foundation.min.js"></script>
+
+	<script src="/js/vendor/jquery.js"></script>
+	<script src="/js/foundation/foundation.min.js"></script>
+
+
+	<!--script src="js/foundation.min.js"></script-->
 	<!--script src="js/foundation/foundation.dropdown.js"></script>  
 
 
