@@ -1,208 +1,124 @@
-
-
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Hier kommt der Typ als Auswahlliste-->
-<div class="row collapse">
-	<div class="small-12 large-4 columns">
-		<?php
-			if($auswahl_Typ!="%"){
-				echo "<a href=\"#\" data-dropdown=\"drop1\" class=\"tiny button dropdown\">",$auswahl_Typ,"</a>";
-			}
-			else {
-				echo "<a href=\"#\" data-dropdown=\"drop1\" class=\"tiny button dropdown secondary\">Typ</a>";
-			}
-		?>
-		<ul id="drop1" class="f-dropdown">
-			<?php
-				if($auswahl_Typ!="%"){echo "<li><a href=\"main_suche.php?Typ=%\">&rarr; reset </a></li>";}
-				$abfrage="
-					SELECT DISTINCT
-						U.TypName
-					FROM DMS AS S
-					INNER JOIN Herausgeber AS Z 
-						ON S.Herausgeber = Z.HerausgeberID
-					INNER JOIN dir AS Y 	
-						ON Y.id = S.dir
-					INNER JOIN typ AS U 	
-						ON U.TypID = S.TypID						
-						
-					WHERE 
-							Y.id LIKE '$auswahl_ordner'
-						AND U.TypName LIKE '$auswahl_Typ'
-						AND S.Speicherdatum Like '$auswahl_Datum'
-						AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
-						AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
-						AND S.Beschreibung LIKE '$auswahl_Beschreibung'
-						AND S.Herausgeber LIKE '$auswahl_Herausgeber'
-						ORDER BY Z.herausgeber
-				";
-				$ergebnis = mysql_query($abfrage);
-				while($row = mysql_fetch_object($ergebnis)) {
-					echo "<li><a href=\"main_suche.php?Typ=",utf8_encode($row->TypName),"\">",utf8_encode($row->TypName),"</a></li>";
-				}				
-			?>
-		</ul>
-	</div>
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Hier kommt die Ordner als Auswahlliste-->
-	<div class="small-12 large-4 columns">
-		<?php
-			$abfrage="SELECT DISTINCT name FROM dir WHERE id=".$auswahl_ordner;
-			$ergebnis = mysql_query($abfrage);
-			while($row = mysql_fetch_object($ergebnis)) {
-				$ordnerName=$row->name;
-			}
-
-			if($auswahl_ordner!="%") {
-				echo "<a href=\"#\" data-dropdown=\"drop2\" class=\"tiny button dropdown\">",$ordnerName,"</a>";
-			}
-			else {
-				echo "<a href=\"#\" data-dropdown=\"drop2\" class=\"tiny button dropdown secondary\">Ordner</a>";
-			}
-		?>
-		<ul id="drop2" class="f-dropdown">
-		<?php
-			if($auswahl_ordner!="%"){echo "<li><a href=\"main_suche.php?ordner=%\">&rarr; reset </a></li>";}
-			$abfrage="
-				SELECT DISTINCT
-					Y.name,
-					Y.id
-				FROM DMS AS S
-				INNER JOIN Herausgeber AS Z 
-					ON S.Herausgeber = Z.HerausgeberID
-				INNER JOIN dir AS Y 	
-					ON Y.id = S.dir
-				INNER JOIN typ AS U 	
-					ON U.TypID = S.TypID					
-				WHERE 
-						Y.id LIKE '$auswahl_ordner'
-					AND U.TypName LIKE '$auswahl_Typ'
-					AND S.Speicherdatum Like '$auswahl_Datum'
-					AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
-					AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
-					AND S.Beschreibung LIKE '$auswahl_Beschreibung'
-					AND S.Herausgeber LIKE '$auswahl_Herausgeber'
-					ORDER BY Y.name
-			";
-			$ergebnis = mysql_query($abfrage);
-			while($row = mysql_fetch_object($ergebnis)) {
-				echo "<li><a href=\"main_suche.php?ordner=",$row->id,"\">",utf8_encode($row->name),"</a></li>";
-			}
-		?>
-		</ul>
-	</div>
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Hier kommt die Herausgeber als Auswahlliste-->
-	<div class="small-12 large-4 columns">
-		<?php
-			$abfrage="SELECT DISTINCT Herausgeber FROM Herausgeber WHERE HerausgeberID=".$auswahl_Herausgeber;
-			$ergebnis = mysql_query($abfrage);
-			while($row = mysql_fetch_object($ergebnis)) {
-				$herausgeberName=$row->Herausgeber;
-			}
-
-			if($auswahl_Herausgeber!="%") {
-				echo "<a href=\"#\" data-dropdown=\"drop3\" class=\"tiny button dropdown\">",$herausgeberName,"</a>";
-			}
-			else {
-				echo "<a href=\"#\" data-dropdown=\"drop3\" class=\"tiny button dropdown secondary\">Herausgeber</a>";
-			}
-		?>
-		<ul id="drop3" class="f-dropdown" data-dropdown-content>
-			<?php
-				if($auswahl_Herausgeber!="%"){echo "<li><a href=\"main_suche.php?herausgeber=%\">&rarr; reset </a></li>";}
-				$abfrage="
-					SELECT DISTINCT
-						Z.Herausgeber,
-						Z.Herausgeberid
-					FROM DMS AS S
-					INNER JOIN Herausgeber AS Z 
-						ON S.Herausgeber = Z.HerausgeberID
-					INNER JOIN dir AS Y 	
-						ON Y.id = S.dir
-					INNER JOIN typ AS U 	
-						ON U.TypID = S.TypID						
-					WHERE 
-							Y.id LIKE '$auswahl_ordner'
-						AND U.TypName LIKE '$auswahl_Typ'
-						AND S.Speicherdatum Like '$auswahl_Datum'
-						AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
-						AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
-						AND S.Beschreibung LIKE '$auswahl_Beschreibung'
-						AND S.Herausgeber LIKE '$auswahl_Herausgeber'
-						ORDER BY Z.Herausgeber
-				";
-				$ergebnis = mysql_query($abfrage);
-				while($row = mysql_fetch_object($ergebnis)) {
-					echo "<li><a href=\"main_suche.php?herausgeber=",$row->Herausgeberid,"\">",utf8_encode($row->Herausgeber),"</a></li>";
-				}
-			?>
-		</ul>
-	</div>
-</div>
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Hier kommt die Beschreibung als Formular-->
-<div class="row collapse">
-	<form action="main_suche.php" method="get">
-		<div class="row collapse">
-			<div class="small-8 columns">
-				<input type="text" placeholder="Suche nach der Beschreibung\" name="Beschreibung">
-			</div>
-				<div class="small-4 columns">
-				<?php
-					if($auswahl_Beschreibung!="%") {
-						echo "<input class=\"button prefix\" value=\"",$auswahl_Beschreibung,"\" type=\"Submit\">";
+<?php
+	echo "<div class=\"row collapse\">";
+	$pos1=strpos($abfrage, "ORDER BY");
+	$abfrageTMP=substr($abfrage,0, $pos1);
+	$pos1=strpos($abfrageTMP, "FROM DMS");
+	$abfrageTMP=" ".substr($abfrageTMP, $pos1);
+	getSpaltenDMS();
+	foreach ($spaltenBeschreibung as $i => $spalt) {
+		switch ($spaltenTyp[$i]) {
+			case "zahl":
+				echo $spaltenBreite[$i];
+					echo "<form action=\"main_suche.php\" method=\"get\">";
+						if ($spaltenSuchwert[$i]!="%") {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+						} else {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";										
+						}
+						if($spaltenSuchwert[$i]!="%") {
+							echo "<div class=\"row collapse\">";
+								echo "<div class=\"small-9 large-9 columns\">";
+									echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
+								echo "</div>";
+								echo "<div class=\"small-3 large-3 columns\">";
+									echo "<a href=\"main_suche.php?".$spaltenName[$i]."=%\" class=\"button prefix\">reset</i></a>";
+								echo "</div>";
+							echo "</div>";
+							
+						}
+						else {
+							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
+						}
+					echo "</form>";
+				echo "</div>";
+				break;
+			case "auswahlStruktur":				
+				echo $spaltenBreite[$i];
+					$b=chr(64+$spaltenID[$i]);
+					$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];
+					$ergebnis = mysql_query($abfrage);
+					while($row = mysql_fetch_object($ergebnis)) {
+						$nameX=$row->$spaltenName[$i];
+					}
+					if($spaltenSuchwert[$i]!="%") {
+						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown\">",$nameX,"</a>";
 					}
 					else {
-						echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
+						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown secondary\">".$spaltenBeschreibung[$i]."</a>";
 					}
-				?>
-
-			</div>
-		</div>
-	</form>
-</div>
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Hier kommt das Herausgabedatum als Formular-->
-<form action="main_suche.php" method="get">
-	<div class="row collapse">
-		<div class="small-12 large-4 columns">
-				<input type="text" placeholder="Herausgabedatum von" name="herausgabeDatumVon">
-		</div>
-		<div class="small-12 large-4 columns">
-			<input type="text" placeholder="Herausgabedatum bis" name="herausgabeDatumBis">
-		</div>
-		<div class="small-12 large-4 columns">
-			<?php
-				if($auswahl_DatumAusgabeVon!="01.01.1000" or $auswahl_DatumAusgabeBis!="01.01.9999") {
-					echo "<input class=\"button prefix\" value=\"",$auswahl_DatumAusgabeVon," - ",$auswahl_DatumAusgabeBis,"\" type=\"Submit\">";
-				}
-				else {
-					echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
-				}
-			?>
-	</div>
-</form>
-
-<!-- Hier kommt das Speicherdatum als Formular-->
-<form action="main_suche.php" method="get">
-	<div class="row collapse">
-		<div class="small-12 large-4 columns">
-				<input type="text" placeholder="Speicherdatum von" name="speicherdatumVon">
-		</div>
-		<div class="small-12 large-4 columns">
-			<input type="text" placeholder="Speicherdatum bis" name="speicherdatumBis">
-		</div>
-		<div class="small-12 large-4 columns">
-			<?php
-				if($auswahl_DatumAusgabeVon!="01.01.1000" or $auswahl_DatumAusgabeBis!="01.01.9999") {
-					echo "<input class=\"button prefix\" value=\"",$auswahl_DatumSpeicherVon," - ",$auswahl_DatumSpeicherBis,"\" type=\"Submit\">";
-				}
-				else {
-					echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
-				}
-			?>
-	</div>
-</form>
-
-
+					echo "<ul id=",$spaltenName[$i]," class=\"f-dropdown\" data-dropdown-content>";
+						if($spaltenSuchwert[$i]!="%"){
+							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=%&startPage=0\">&rarr; reset </a></li>";
+						}						
+						$ergebnis = mysql_query($abfrage);
+						$spalteX=$spaltenName[$i]."ID";						
+						while($row = mysql_fetch_object($ergebnis)) {			
+							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=",$row->$spalteX,"&startPage=0","\">",$row->$spaltenName[$i],"</a></li>";
+						}
+					echo "</ul>";
+				echo "</div>";
+				break;
+			case "auswahl":
+				echo $spaltenBreite[$i];	
+					$b=chr(64+$spaltenID[$i]);
+					$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];
+					$ergebnis = mysql_query($abfrage);
+					while($row = mysql_fetch_object($ergebnis)) {
+						$nameX=$row->$spaltenName[$i];
+					}
+					if($spaltenSuchwert[$i]!="%") {
+						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown\">",$nameX,"</a>";
+					}
+					else {
+						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown secondary\">".$spaltenBeschreibung[$i]."</a>";
+					}
+					echo "<ul id=",$spaltenName[$i]," class=\"f-dropdown\" data-dropdown-content>";
+						if($spaltenSuchwert[$i]!="%"){
+							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=%&startPage=0\">&rarr; reset </a></li>";
+						}
+						$ergebnis = mysql_query($abfrage);
+						$spalteX=$spaltenName[$i]."ID";
+						while($row = mysql_fetch_object($ergebnis)) {			
+							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=",$row->$spalteX,"&startPage=0","\">",$row->$spaltenName[$i],"</a></li>";
+						}
+					echo "</ul>";
+				echo "</div>";
+				break;
+			case "text":
+				echo $spaltenBreite[$i];
+					echo "<form action=\"main_suche.php\" method=\"get\">";
+						if ($spaltenSuchwert[$i]!="%") {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+						} else {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
+						}								
+						if($spaltenSuchwert[$i]!="%") {
+							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
+						}
+						else {
+							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
+						}
+					echo "</form>";
+				echo "</div>";
+				break;
+			case "datum":
+				echo $spaltenBreite[$i];
+					echo "<form action=\"main_suche.php\" method=\"get\">";
+						if ($spaltenSuchwert[$i]!="%") {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+						} else {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";										
+						}
+						if($spaltenSuchwert[$i]!="%") {
+							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
+						}
+						else {
+							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
+						}
+					echo "</form>";
+				echo "</div>";
+				break;
+		}
+	}	
+	echo "</div>";	
+?>

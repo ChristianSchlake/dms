@@ -1,5 +1,5 @@
 <?php
-	session_start();
+//	session_start();
 	include("sub_init_database.php");
 ?>
 
@@ -10,72 +10,218 @@
 	<title>DMS</title>
 
 	<link rel="stylesheet" href="css/foundation.css">
-
-	<!--script src="/js/vendor/custom.modernizr.js"></script-->
-
-
-	<!--script>
-		document.write('<script src=' +
-		('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
-		'.js><\/script>')
-	</script-->
+	<link rel="stylesheet" href="icons/foundation-icons.css"/>
 	
-	<!--script src="/js/vendor/custom.modernizr.js"></script-->
+<style>      
+	.size-12 { font-size: 12px; }
+	.size-14 { font-size: 14px; }
+	.size-16 { font-size: 16px; }
+	.size-18 { font-size: 18px; }
+	.size-21 { font-size: 21px; }
+	.size-24 { font-size: 24px; }
+	.size-36 { font-size: 36px; }
+	.size-48 { font-size: 48px; }
+	.size-60 { font-size: 60px; }
+	.size-72 { font-size: 72px; }
+	.size-X { font-size: 26px; }
+</style>
 
 </head>
 
 <body>
-<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->
-<!-- Einstellungen -->
-<?php
-	$maxEintraegeProSite=10;
-?>
 
 <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->
 <!-- Functions -->
 <?php
-	function generateListOrdner($root_id = 0) {
-		$abfrage="
-			SELECT DISTINCT
-				a.son,
-				b.name
-			FROM dirStructure AS a
-			INNER JOIN dir AS b
-				ON b.id = a.son
-			where a.father = $root_id
-		";
-		$ergebnis = mysql_query($abfrage);
-		while($row = mysql_fetch_object($ergebnis)) {
-			/*echo "<li><label>",$row->name,"</label></li>";*/
-			$abrage_sohn="
-				SELECT DISTINCT
-					a.son,
-					b.name
-				FROM dirStructure AS a
-				INNER JOIN dir AS b
-					ON b.id = a.son
-				where a.father = $row->son
-			";
-			$ergebnis_sohn=mysql_query($abrage_sohn);
-			$zahl=mysql_num_rows($ergebnis_sohn);
-			if($zahl>0) {
-				echo "<li class=\"has-dropdown\"><a href=\"?ordner=",$row->son,"\">",$row->name,"</a>";
-					echo "<ul class=\"dropdown\">";
-						generateListOrdner($row->son);
-					echo "</ul>";
-				echo "</li>";
-			   }
-			else {
-				echo "<li><a href=\"?ordner=",$row->son,"\">",$row->name,"</a></li>";
-			   }
+	include("functions.php");
+?>
 
+<?php	
+/*-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -*/
+/* Variablen eintragen */
+	foreach ($_GET as $key => $value) {
+		if ($key=="aufruf") {
+			reset_suche();
 		}
+//		echo $key,"-->",$value,"<br>";
+		$abfrage="UPDATE typenDefinition SET suchwert='".$value."' WHERE name='".$key."'";
+		mysql_query($abfrage);	
 	}
 
-/*-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -*/
-/* Variablen einlesen */
-	include("sub_suche_load_variablen.php");
-	
+// File Upload ausführen
+	getSpaltenDMS(); 	
+	// reset option Fileupload
+	$abfrage="UPDATE typenDefinition SET eingabewert=0 WHERE name=\"fileupload\"";
+	mysql_query($abfrage);
+	// Post Daten abfragen und in die Datenbank eintragen	
+	foreach ($_POST as $key => $value) {
+		if ($key=="idEDI") {
+			$idEdit=$value;
+		}		
+		$key=substr($key,0,-3); // das ADD am ende entfernen
+		$abfrage="UPDATE typenDefinition SET eingabewert='".$value."' WHERE name='".$key."'";
+		mysql_query($abfrage);
+	}
+	getSpaltenDMS();
+	$fileUpLoad=abfrageEinstellungADDFile("fileupload");
+	if ($fileUpLoad==1) {
+		$allesRichtig=true;
+		foreach ($spaltenEingabewert as $i => $spalte) {
+			switch ($spaltenTyp[$i]) {
+				case "zahl":
+					if ($spaltenFormularAnzeige[$i]==1) {					
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
+					}
+					break;
+				case "auswahlStruktur":
+					if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}					
+					}
+					break;
+				case "auswahl":
+					if ($spaltenFormularAnzeige[$i]==1) {					
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}					
+					}
+					break;
+				case "text":
+					if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
+					}
+					break;
+				case "datum":
+					if ($spaltenFormularAnzeige[$i]==1) {
+						if (checkDateX($spalte)!=true) {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
+					}
+					break;
+			}
+		}		
+		if ($allesRichtig==true) {
+			if(is_uploaded_file($_FILES['userfile']['tmp_name'])){
+				// neue ID ermitteln
+				$MaxID=mysql_query("SELECT MAX(id) FROM DMS");
+				$MaxID=mysql_fetch_array($MaxID, MYSQL_BOTH);
+				$MaxID=$MaxID[0];
+				$MaxID=$MaxID+1;
+				// Dateinamen ersetllen
+				$path_parts=pathinfo($_FILES['userfile']['name']);
+				$extension=$path_parts['extension'];
+				$datei="upload/".$MaxID.".".$extension;
+				move_uploaded_file($_FILES['userfile']['tmp_name'], $datei);
+				$spaltenClause="";
+				$spaltenValueClause="";
+				getSpaltenDMS();
+				foreach ($spaltenName as $i => $spalte) {
+					
+					switch ($spaltenTyp[$i]) {
+						case 'einstellung':
+							break;
+						case 'datum':
+							if ($spaltenFormularAnzeige[$i]==1) {
+								$spaltenClause=$spaltenClause.",".$spaltenName[$i];
+								$spaltenValueClause=$spaltenValueClause.",STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";								
+							}
+							break;
+						default:
+							if ($spaltenFormularAnzeige[$i]==1) {
+								$spaltenClause=$spaltenClause.",".$spaltenName[$i];
+								$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
+							}
+							break;
+					}
+				}
+				$spaltenClause=substr($spaltenClause,1);
+				$spaltenValueClause=substr($spaltenValueClause,1);
+				$aufruf="INSERT INTO DMS (".$spaltenClause.",Datei,id) VALUES (".$spaltenValueClause.",\"".$_FILES['userfile']['name']."\",".$MaxID.")";
+//				echo $aufruf;
+				$eintragen = mysql_query($aufruf);
+			} else {
+				echo "<span class=\"round alert label\">Fehler beim Dateiupload</span>";
+			}
+		} else {
+			echo "<br>";
+			echo "<span class=\"round alert label\">Das Dokument wurde nicht eingecheckt!</span>";
+		}
+	}
+// Update der Daten durchführen
+	getSpaltenDMS();
+	if ($fileUpLoad==2) {
+		$allesRichtig=true;
+		foreach ($spaltenEingabewert as $i => $spalte) {
+//			echo $i,"-->",$spalte,"<br>";
+			switch ($spaltenTyp[$i]) {
+				case "zahl":
+					if ($spaltenFormularAnzeige[$i]==1) {					
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
+					}
+					break;
+				case "auswahlStruktur":
+					if ($spalte=="") {
+						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+						$allesRichtig=false;
+					}					
+					break;
+				case "auswahl":
+					if ($spalte=="") {
+						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+						$allesRichtig=false;
+					}					
+					break;
+				case "text":
+					if ($spalte=="") {
+						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+						$allesRichtig=false;
+					}
+					break;
+				case "datum":
+					if (checkDateX($spalte)!=true) {
+						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+						$allesRichtig=false;						
+					}
+					break;
+			}
+		}
+		if ($allesRichtig==true) {
+			$abfrage="UPDATE DMS SET dir=".$ordner.",TypID=".$Typ.",Beschreibung=\"".$Beschreibung."\",Herausgeber=".$herausgeber.",Herausgabedatum=STR_TO_DATE('".$herausgabedatum."', '%d.%m.%Y') WHERE id=".$id; 
+			foreach ($spaltenName as $i => $spalte) {				
+				switch ($spaltenTyp[$i]) {
+					case 'einstellung':
+						break;
+					case 'datum':
+						if ($spaltenFormularAnzeige[$i]==1) {
+							$spaltenClause=$spaltenClause.",".$spaltenName[$i]."=STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";
+						}
+						break;
+					default:
+						if ($spaltenFormularAnzeige[$i]==1) {						
+							$spaltenClause=$spaltenClause.",".$spaltenName[$i]."=\"".$spaltenEingabewert[$i]."\"";
+						}
+						break;
+				}
+			}
+			$spaltenClause=substr($spaltenClause,1);
+			$aufruf="UPDATE DMS SET ".$spaltenClause." WHERE id=".$idEdit;
+//			echo $aufruf;
+			$eintragen = mysql_query($aufruf);
+		}		
+	}
 ?>
 
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
@@ -83,254 +229,406 @@
 <nav class="top-bar" data-topbar data-options="is_hover:true">
 	<ul class="title-area">
 		<li class="name">
-			<h1><a href="sub_suche_reset_session.php">DMS</a></h1>
+			<h1><a href="main_suche.php?aufruf=1"><i class="fi-refresh "></i>  DMS</a></h1>
 		</li>
 		<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
 	</ul>
 	<section class="top-bar-section">
-		<ul class="left">								
-			<!-- Navigation -->
-			<li class="divider hide-for-small"></li>
-			<li class="has-dropdown"><a href="#">Navigation</a>
-				<ul class="dropdown">
-					<li><a href=main_verwalte_Herausgeber.php>Herausgeber verwalten</a></li>
-					<li><a href=main_verwalte_Typ.php>Typ verwalten</a></li>								
-				</ul>
-			</li>
-			<!-- Typ -->
-			<li class="divider hide-for-small"></li>
-			<li class="has-dropdown"><a href="main_suche.php">Typ</a>
-				<ul class="dropdown">
-					<?php		
-						$abfrage="SELECT DISTINCT typName FROM typ ORDER BY typName";
-						$ergebnis = mysql_query($abfrage);
-						while($row = mysql_fetch_object($ergebnis)) {
-							echo "<li><a href=\"main_suche.php?Typ=",$row->typName,"\">",$row->typName,"</a></li>";
-						}
-
-					?>
-				</ul>
-			</li>
-
-			<!-- Ordner -->
-			<li class="divider hide-for-small"></li>
-			<li class="has-dropdown"><a href="main_suche.php">Ordner</a>
-				<ul class="dropdown">
-					<?php		
-						generateListOrdner(0);
-					?>
-				</ul>
-			</li>
-
-			<!-- Beschreibung -->
-			<li class="divider hide-for-small"></li>
-			<li class="has-form">
-				<form action="main_suche.php" method="get">
-					<div class="row collapse">
-						<div class="small-9 columns">
-							<input type="text" placeholder="Suchen der Beschreibung" name="Beschreibung">
-						</div>
-						<div class="small-3 columns">
-							<input class="button" value="suchen" type="Submit">"
-						</div>
-					</div>
-				</form>
-			</li>
+		<ul class="left">
+	        <li class="divider hide-for-small"></li>
+	        <li class="has-dropdown"><a href="#"><i class="fi-list "></i> Listen verwalten</a>
+	                <ul class="dropdown">
+						<?php
+							getSpaltenDMS();	
+							foreach ($spaltenName as $i => $value) {
+								switch ($spaltenTyp[$i]) {
+									case 'auswahl':								
+											echo "<li><a href=\"sub_verwalte_auswahl.php?editStatus=0&tabelle=".$spaltenName[$i]."\">",$spaltenBeschreibung[$i]."</a></li>";
+										break;
+								}
+							}
+						?>
+	                </ul>
+	        </li>
+			<li class="divider hide-for-small"></li>			
+			<a class="button secondary round" href="main_suche.php" data-reveal-id="suchModal"><i class="fi-page-search"></i> suchen</a>
 		</ul>
 		<ul class="right">
-			<li class="has-form">
-				<a class="button round" href="main_addfile.php">Neues Dokument</a>
-			</li>
+			<a class="button secondary round" href="main_suche.php" data-reveal-id="newFileModal"><i class="fi-page-add"></i> neues Dokument</a>
 		</ul>
+		
 	</section>
 </nav>
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-<!-- Suchformular -->
-<div class="row">
-	<fieldset>
-	<legend>Suche</legend>
-		<div class="small-12 large-12 columns">			
-			<?php
-				include("sub_suche_add_button.php");
-			?>		
-		</div>
-	</fieldset>
-</div>
 
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 <!-- Tabelle anzeigen -->
+<?php
+	$editStatus=abfrageEinstellung("editStatus");
+	getSpaltenDMS();
+?>
 <div class="row">
 	<fieldset>
 		<legend>DMS Tabelle</legend>
 		<div class="row">
-			<dl class="sub-nav">
-				<?php
-					if($editStatus==0){
-		  				echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
-	  					echo "<dd><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
-					}
-					else {
-		  				echo "<dd><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
-	  					echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
-					}
-				?>
-			</dl>		
-		</div>		
-		
-		<div class="row">		
-			<div class="small-6 large-1 columns">
-				<?php
-				// ID
-					if($auswahl_sortierung=="S.id" or $auswahl_sortierung=="S.id DESC") {
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button\">id</a></th>";}
-					else{
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.id\" class=\"small button secondary\">id</a></th>";}
-				?>						
-			</div>
-			<div class="small-6 large-2 columns">
-				<?php
-				// Typ
-					if($auswahl_sortierung=="U.TypName" or $auswahl_sortierung=="U.TypName DESC") {
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button\">Typ</a></th>";}
-					else{
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=U.TypName\" class=\"small button secondary\">Typ</a></th>";}
-				?>
-			</div>							
-			<div class="small-12 large-4 columns">
-				<?php
-				// Beschreibung
-					if($auswahl_sortierung=="S.Beschreibung" or $auswahl_sortierung=="S.Beschreibung DESC") {
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Beschreibung\" class=\"small button\">Beschreibung</a></th>";}
-					else{
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Beschreibung\" class=\"small button secondary\">Beschreibung</a></th>";}
-				?>
-			</div>
-			<div class="small-6 large-3 columns">
-				<?php
-				// Ordner
-					if($auswahl_sortierung=="X.name" or $auswahl_sortierung=="X.name DESC") {
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=X.name\" class=\"small button\">Ordner</a></th>";}
-					else{
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=X.name\" class=\"small button secondary\">Ordner</a></th>";}
-				?>
-				<br>
+			<div class="small-12 large-12 columns"\>
+				<dl class="sub-nav">
 					<?php
-				// Herausgeber
-					if($auswahl_sortierung=="Z.Herausgeber" or $auswahl_sortierung=="Z.Herausgeber DESC") {
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=Z.Herausgeber\" class=\"small button\">Herausgeber</a></th>";}
-					else{
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=Z.Herausgeber\" class=\"small button secondary\">Herausgeber</a></th>";}
+						if($editStatus==0){
+			  				echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
+		  					echo "<dd><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
+						}
+						else {
+			  				echo "<dd><a href=\"main_suche.php?editStatus=0\">Show</a></dd>";
+		  					echo "<dd class=\"active\"><a href=\"main_suche.php?editStatus=1\">Edit</a></dd>";
+						}
 					?>
+				</dl>
+				<hr>		
 			</div>
-			<div class="small-6 large-2 columns">
-				<?php
-				// Herausgabedatum
-					if($auswahl_sortierung=="S.Herausgabedatum" or $auswahl_sortierung=="S.Herausgabedatum DESC") {
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Herausgabedatum\" class=\"small button\">Herausgabedatum</a></th>";}
-					else{
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Herausgabedatum\" class=\"small button secondary\">Herausgabedatum</a></th>";}
-				?>
-				<br>
-				<?php
-				// Speicherdatum
-					if($auswahl_sortierung=="S.Speicherdatum" or $auswahl_sortierung=="S.Speicherdatum DESC") {
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Speicherdatum\" class=\"small button\">Speicherdatum</a></th>";}
-					else{
-						echo "<th><a href=\"sub_suche_add_sortierung.php?sortierung=S.Speicherdatum\" class=\"small button secondary\">Speicherdatum</a></th>";}
-				?>													
-			</div>
-			<hr />
-		</div>
+			
+		</div>		
+		<!-- Spaltenüberschriften -->
 		<?php
-			$abfrage="
-			SELECT DISTINCT
-					S.id,
-					U.TypName,
-					S.Beschreibung,
-					S.Datei,
-					S.Speicherdatum,
-					S.Herausgabedatum,
-					Z.Herausgeber,
-					Z.HerausgeberID,
-					X.name,
-					S.Speicherdatum
-				FROM DMS AS S
-				INNER JOIN Herausgeber AS Z 
-					ON S.Herausgeber = Z.HerausgeberID
-				INNER JOIN typ AS U 
-					ON U.TypID = S.TypID																
-				INNER JOIN dir AS X 	
-					ON X.id = S.dir
-				WHERE 
-						X.name LIKE '$auswahl_Kategorie'
-					AND U.TypName LIKE '$auswahl_Typ'
-					AND S.Speicherdatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
-					AND S.Speicherdatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
-					AND S.Herausgabedatum >= STR_TO_DATE('$auswahl_DatumAusgabeVon', '%d.%m.%Y')
-					AND S.Herausgabedatum <= STR_TO_DATE('$auswahl_DatumAusgabeBis', '%d.%m.%Y')
-					AND S.Beschreibung LIKE '$auswahl_Beschreibung'
-					AND S.Herausgeber LIKE '$auswahl_Herausgeber'
-					AND S.dir LIKE '$auswahl_ordner'
-					AND S.id LIKE '$auswahl_id'
-					ORDER BY $auswahl_sortierung
-			";
-			$ergebnis = mysql_query($abfrage);
-			$menge = mysql_num_rows($ergebnis);						
-			$abfrage=$abfrage."LIMIT $startPage, $maxEintraegeProSite";					
-			$ergebnis = mysql_query($abfrage);
-			if($editStatus==0){
-				while($row = mysql_fetch_object($ergebnis))
-				{
-					$extension=explode(".",$row->Datei);
-					echo "<div class=\"row\">";
-						echo "<div class=\"small-6 large-1 columns\">";
-							echo "<p>",$row->id,"</p>";
+			$sortierung=abfrageEinstellung("sortierung");
+			$sortierfolge=abfrageEinstellung("sortierfolge");
+			if ($sortierfolge==1) {				
+				$sortierfolgeNEU=0;
+			} else {
+				$sortierfolgeNEU=1;
+			}
+			$sortClause="";
+//--------------------------------------------------------------------------------------------------------------------
+// Tabellenüberschrift einfügen
+//--------------------------------------------------------------------------------------------------------------------
+		echo "<div class=\"row\">";
+			foreach ($spaltenName as $i => $spalte) {
+				// Aufteilung im Grid festelgen (Gilt auf für die Spaltendarstellung weiter unten)
+				switch ($spaltenTyp[$i]) {
+					case 'auswahl':
+						$gridAuswahl="<div class=\"small-8 large-3 columns\">";
+						// Sortierung
+						$b=chr(64+$spaltenID[$i]);
+						if ($sortierung==$spaltenName[$i]) {
+							$sortClause=" ORDER BY ".$b.".".$spaltenName[$i];
+						}
+						break;
+					case 'auswahlStruktur':
+						$gridAuswahlStruktur="<div class=\"small-8 large-3 columns\">";
+						// Sortierung
+						$b=chr(64+$spaltenID[$i]);
+						if ($sortierung==$spaltenName[$i]) {
+							$sortClause=" ORDER BY ".$b.".".$spaltenName[$i];
+						}
+						break;
+					case 'text':
+						$gridText="<div class=\"small-12 large-8 columns\">";
+						// Sortierung						
+						if ($sortierung==$spaltenName[$i]) {
+							$sortClause=" ORDER BY ".$spaltenName[$i];
+						}
+						break;
+					case 'zahl':
+						$gridZahl="<div class=\"small-3 large-1 columns\">";
+						// Sortierung						
+						if ($sortierung==$spaltenName[$i]) {
+							$sortClause=" ORDER BY ".$spaltenName[$i];
+						}
+						break;
+					case 'datum':
+						$gridDatum="<div class=\"small-6 large-3 columns\">";
+						// Sortierung						
+						if ($sortierung==$spaltenName[$i]) {
+							$sortClause=" ORDER BY ".$spaltenName[$i];
+						}
+						break;						
+				}
+				// Button einfügen			
+				switch ($spaltenTyp[$i]) {
+					case 'auswahl':
+						echo $spaltenBreite[$i];
+						if($sortierung==$spaltenName[$i]) {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
+						} else {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						}
 						echo "</div>";
-						echo "<div class=\"small-6 large-2 columns\">";
-							echo "<p>",$row->TypName,"</p>";
+						break;
+					case 'auswahlStruktur':
+						echo $spaltenBreite[$i];
+						if($sortierung==$spaltenName[$i]) {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
+						} else {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						}
 						echo "</div>";
-						echo "<div class=\"small-12 large-4 columns\">";
-							echo "<a href=\"upload/",$row->id,".",$extension[count($extension)-1],"\">",$row->Beschreibung,"</a>";
+						break;
+					case 'text':
+						echo $spaltenBreite[$i];
+						if($sortierung==$spaltenName[$i]) {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
+						} else {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						}
 						echo "</div>";
-						echo "<div class=\"small-6 large-3 columns\">";
-								echo "<p>",$row->name,"</p>";
-								echo "<br>";
-								echo "<p>",$row->Herausgeber,"</p>";
+						break;
+					case 'zahl':						
+						echo $spaltenBreite[$i];
+						if($sortierung==$spaltenName[$i]) {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
+						} else {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						}
 						echo "</div>";
-						echo "<div class=\"small-6 large-2 columns\">";
-								echo "<p>",date("d.m.Y",strtotime($row->Herausgabedatum)),"</p>";
-								echo "<br>";
-								echo "<p>",date("d.m.Y",strtotime($row->Speicherdatum)),"</p>";
+						break;
+					case 'datum':
+						echo $spaltenBreite[$i];
+						if($sortierung==$spaltenName[$i]) {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
+						} else {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						}
 						echo "</div>";
-						echo "<hr />";
-					echo "</div>";
+						break;						
 				}
 			}
-			else {
-				include("sub_suche_update_addbutton.php");
-		
+			if ($sortierfolge==0) {
+				$sortClause=$sortClause." DESC";
+			}		
+		echo "</div>";
+		echo "<hr>";
+//--------------------------------------------------------------------------------------------------------------------
+// Tabelleninhalt einfügen
+//--------------------------------------------------------------------------------------------------------------------
+			// Select abfrage aufbauen
+			$innerJoin="";
+			$whereClause="";
+			$selectClause="";
+			foreach ($spaltenName as $i => $spalte) {
+				switch ($spaltenTyp[$i]) {
+					case 'auswahl':
+						$b=chr(64+$spaltenID[$i]);
+						$selectClause=$selectClause.",".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID";
+						$innerJoin=$innerJoin." INNER JOIN ".$spaltenName[$i]." AS ".$b." ON Z.".$spaltenName[$i]." = ".$b.".".$spaltenName[$i]."ID";
+						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
+						break;
+					case 'auswahlStruktur':
+						$b=chr(64+$spaltenID[$i]);
+						$selectClause=$selectClause.",".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID";
+						$innerJoin=$innerJoin." INNER JOIN ".$spaltenName[$i]." AS ".$b." ON Z.".$spaltenName[$i]." = ".$b.".".$spaltenName[$i]."ID";
+						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
+						break;
+					case 'zahl':
+						$b=chr(64+$spaltenID[$i]);
+						$selectClause=$selectClause.",".$spaltenName[$i];
+						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
+						break;
+					case 'text':
+						$b=chr(64+$spaltenID[$i]);
+						$selectClause=$selectClause.",".$spaltenName[$i];
+						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
+						break;
+					case 'datum':
+						$b=chr(64+$spaltenID[$i]);
+						$selectClause=$selectClause.",".$spaltenName[$i];
+						$datumX=explode("-",$spaltenSuchwert[$i]);
+						if (strtotime($datumX[0])>strtotime("01.01.0000")) {
+							$whereClause=$whereClause." AND Z.".$spaltenName[$i]." >= STR_TO_DATE('".$datumX[0]."','%d.%m.%Y')";
+						}
+						if (strtotime($datumX[1])>strtotime("01.01.0000")) {
+							$whereClause=$whereClause." AND Z.".$spaltenName[$i]." <= STR_TO_DATE('".$datumX[1]."','%d.%m.%Y')";
+						} else {
+							// wenn nur ein Wert, dann nach dem genauen Datum suchen!
+							$whereClause=str_replace(" AND Z.".$spaltenName[$i]." >= STR_TO_DATE("," AND STR_TO_DATE(Z.".$spaltenName[$i].",'%Y-%m-%d') = STR_TO_DATE(", $whereClause); 
+						}						
+						break;						
+				}									
+			}
+			$selectClause=ltrim($selectClause, ",");
+			$innerJoin="SELECT ".$selectClause.",id, Datei FROM DMS AS Z".$innerJoin." WHERE ";
+			$whereClause=ltrim($whereClause, " AND ");
+			$abfrage=$innerJoin.$whereClause.$sortClause;						
+			// Suchergebnis in einer Tabelle darstellen
+			$startPage=abfrageEinstellung("startPage");
+			$maxEintraegeProSite=abfrageEinstellung("maxEintraege");
+			$ergebnis = mysql_query($abfrage);
+			$menge = mysql_num_rows($ergebnis);
+			if ($menge<$startPage) {
+				$startPage=0;				
+			}			
+			$abfrage=$abfrage." LIMIT $startPage, $maxEintraegeProSite";
+			$ergebnis = mysql_query($abfrage);
+			$datumsFormat=abfrageEinstellung("datumFormat");
+//			echo $abfrage;
+			if($editStatus==0)
+			{					
+				while($row = mysql_fetch_object($ergebnis))
+				{
+					echo "<div class=\"row\">";
+					foreach ($spaltenName as $i => $spalte)
+					{
+						$extension=explode(".",$row->Datei);
+						switch ($spaltenTyp[$i])
+						{
+							case 'auswahl':
+								$spalteX=$spaltenName[$i];
+								echo $spaltenBreite[$i];
+									echo "<p>",$row->$spalteX,"</p>";
+								echo "</div>";
+								break;
+							case 'auswahlStruktur':
+								$spalteX=$spaltenName[$i];
+								echo $spaltenBreite[$i];
+									echo "<p>",$row->$spalteX,"</p>";
+								echo "</div>";
+								break;
+							case 'text':
+								$spalteX=$spaltenName[$i];
+								echo $spaltenBreite[$i];
+									echo "<p>",$row->$spalteX,"</p>";
+								echo "</div>";
+								break;
+							case 'zahl':
+								$spalteX=$spaltenName[$i];
+								echo $spaltenBreite[$i];
+									echo "<p>",$row->$spalteX,"</p>";
+								echo "</div>";
+								break;
+							case 'datum':
+								$spalteX=$spaltenName[$i];
+								echo $spaltenBreite[$i];
+									echo "<p>",date($datumsFormat,strtotime($row->$spalteX)),"</p>";
+								echo "</div>";
+								break;
+						}						
+					}
+					echo "<div class=\"small-12 large-12 columns\">";
+						echo "<a class=\"button secondary step fi-download expand size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></a>";
+					echo "</div>";
+				echo "</div>";
+				echo "<hr>";
+				}
+			} else {
+				while($row = mysql_fetch_object($ergebnis)) {
+					echo "<div class=\"row\">";
+						echo "<form class=\"custom\" action=\"main_suche.php\" method=\"post\">";
+							foreach ($spaltenName as $i => $spalte)
+							{						
+								switch ($spaltenTyp[$i]) 
+								{
+									case 'auswahl':
+										$spalteX=$spaltenName[$i]."ID";
+										$eingabeWert=$row->$spalteX;
+										if ($spaltenFormularAnzeige[$i]==1) {											
+											$abfrageX="SELECT DISTINCT * FROM ".$spaltenName[$i]." ORDER BY ".$spaltenName[$i];
+											$ergebnisX = mysql_query($abfrageX);
+											echo $spaltenBreite[$i];
+												echo "<label>".$spaltenBeschreibung[$i]."</label>";											
+												echo "<select class=\"medium\" name=\"".$spaltenName[$i]."EDI\">";
+													while($rowX = mysql_fetch_object($ergebnisX)) {
+														if ($rowX->$spalteX==$eingabeWert) {
+															echo "<option selected value=".$rowX->$spalteX.">",$rowX->$spaltenName[$i],"</option>";
+														} else {						
+															echo "<option value=".$rowX->$spalteX.">",$rowX->$spaltenName[$i],"</option>";
+														}
+													}
+												echo "</select>";
+											echo "</div>";
+										}
+										break;
+									case 'auswahlStruktur':
+										$spalteX=$spaltenName[$i]."ID";
+										$selectedItem=$row->$spalteX;
+										if ($spaltenFormularAnzeige[$i]==1) {										
+											echo $spaltenBreite[$i];
+												echo "<label>".$spaltenBeschreibung[$i]."</label>";
+												echo "<select class=\"medium\" name=\"".$spaltenName[$i]."EDI\">";
+												generateListOrdnerFormular(0,$selectedItem,$spaltenName[$i]);
+												echo "</select>";
+											echo "</div>";
+										}
+										break;
+									case 'text':
+										$spalteX=$spaltenName[$i];
+										$eingabeWert=$row->$spalteX;
+										if ($spaltenFormularAnzeige[$i]==1) {										
+											echo $spaltenBreite[$i];
+												echo "<label>".$spaltenBeschreibung[$i]."</label>";
+												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
+											echo "</div>";
+										}
+										break;
+									case 'zahl':
+										$spalteX=$spaltenName[$i];
+										$eingabeWert=$row->$spalteX;
+										if ($spaltenFormularAnzeige[$i]==1) {										
+											echo $spaltenBreite[$i];
+												echo "<label>".$spaltenBeschreibung[$i]."</label>";
+												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
+											echo "</div>";
+										}
+										break;
+									case 'datum':
+										$spalteX=$spaltenName[$i];
+										$eingabeWert=$row->$spalteX;
+										if ($spaltenFormularAnzeige[$i]==1) {										
+											echo $spaltenBreite[$i];
+												echo "<label>".$spaltenBeschreibung[$i]."</label>";
+												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".date($datumsFormat,strtotime($eingabeWert))."\" name=\"".$spaltenName[$i]."EDI\">";
+											echo "</div>";
+										}
+										break;
+								}						
+							}
+							echo "<input type=\"hidden\" value=\"2\" name=\"fileuploadADD\">";
+							echo "<input type=\"hidden\" value=\"".$row->id."\" name=\"idEDI\">";
+							$extension=explode(".",$row->Datei);
+							echo "<a class=\"button step fi-download expand size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></a>";														
+							echo "<button class=\"step fi-page-edit expand size-X\" type=\"Submit\"></button>";
+						echo "</form>";
+					echo "</div>";
+					echo "<hr>";
+				}
 			}
 		?>
-		<div class="row">
-			<div class="pagination-centered">
-				<ul class="pagination">		
-					<?php
-						echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage-$maxEintraegeProSite,"\">&laquo;</a></li>";						
-						for ($i=0; $i < $menge; $i=$i+$maxEintraegeProSite) { 								
-							if($i>=$startPage and $i <$startPage+$maxEintraegeProSite){
-								echo "<li class=\"current\"><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";							
-							}
-							else{
-								echo "<li><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
-							}
+		<div class="pagination-centered">
+			<ul class="pagination">		
+				<?php
+					echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage-$maxEintraegeProSite,"\">&laquo;</a></li>";
+					for ($i=0; $i < $menge; $i=$i+$maxEintraegeProSite) { 								
+						if($i>=$startPage and $i <$startPage+$maxEintraegeProSite){
+							echo "<li class=\"current\"><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
 						}
-						echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage+$maxEintraegeProSite,"\">&raquo;</a></li>";							
-					?>
-				</ul>
-			</div>
+						else{
+							echo "<li><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
+						}
+					}
+					echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage+$maxEintraegeProSite,"\">&raquo;</a></li>";							
+				?>
+			</ul>
 		</div>
 	</fieldset>
+</div>	
+
+<!-- Suchformular -->
+<div id="suchModal" class="reveal-modal" data-reveal>
+	<fieldset>
+		<legend>Suche</legend>
+		<?php
+			include("sub_suche_add_button.php");
+		?>		
+	</fieldset>
 </div>
+
+<!-- Formular neue Datei -->
+<div id="newFileModal" class="reveal-modal" data-reveal>
+	<fieldset>
+	<legend>Suche</legend>
+		<?php
+			include("sub_addfile_add_button.php");
+		?>		
+	</fieldset>
+</div>
+
 
 <?php
 	mysql_close($verbindung);
@@ -341,6 +639,7 @@
   <script src="js/foundation/foundation.js"></script>
   <script src="js/foundation/foundation.topbar.js"></script>
   <script src="js/foundation/foundation.dropdown.js"></script>
+  <script src="js/foundation/foundation.reveal.js"></script>
   <script>$(document).foundation();</script>  
   
 <!--script src="js/vendor/jquery.js"></script>
