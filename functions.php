@@ -50,7 +50,7 @@
 	}
 
 	function getSpaltenDMS() {
-		global $spaltenName, $spaltenTyp, $spaltenBeschreibung, $spaltenSuchwert, $spaltenID, $spaltenEingabewert, $spaltenFormularAnzeige, $spaltenBreite;
+		global $spaltenName, $spaltenTyp, $spaltenBeschreibung, $spaltenSuchwert, $spaltenID, $spaltenEingabewert, $spaltenFormularAnzeige, $spaltenBreite, $spaltenErgebnisAnzeige;
 		$spaltenName=array();
 		$spaltenTyp=array();
 		$spaltenBeschreibung=array();
@@ -59,6 +59,7 @@
 		$spaltenEingabewert=array();
 		$spaltenFormularAnzeige=array();
 		$spaltenBreite=array();
+		$spaltenErgebnisAnzeige=array();
 		// Spalten ermitteln
 		$result = mysql_query("SELECT * FROM typenDefinition ORDER BY reihenfolge");
 		while ($row = mysql_fetch_object($result)) {
@@ -70,12 +71,15 @@
 			$spaltenEingabewert[]=$row->eingabewert;
 			$spaltenFormularAnzeige[]=$row->eingabeFormular;
 			$spaltenBreite[]=$row->spaltenbreite;
+			$spaltenErgebnisAnzeige[]=$row->ergebnisListe;
 		}
 		foreach ($spaltenBreite as $i => $value) {
 			$breite=explode(",", $spaltenBreite[$i]);
 			if ($breite[0]>0 and $breite[1]>0 and $breite[0]<13 and $breite[1]<13 and is_numeric($breite[0])==true and is_numeric($breite[1])==true) {
 				$spaltenBreite[$i]="<div class=\"small-".$breite[1]." large-".$breite[0]." columns\">";
 //				$spaltenBreite[$i]="<div class=\"small-8 large-3 columns\">";	
+			} else {
+				$spaltenBreite[$i]="<div class=\"small-12 large-12 columns\">";
 			}
 		}
 	}
@@ -106,10 +110,11 @@
 					break;
 				case 'datum':
 					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
-					break;
+					break;					
 			}
 		}
 		$aufruf=substr($aufruf, 1);
+		$aufruf=$aufruf."&startPage=0";
 		header("Location: main_suche.php?".$aufruf);
 	}
 	

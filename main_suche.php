@@ -264,7 +264,9 @@
 <nav class="top-bar" data-topbar data-options="is_hover:true">
 	<ul class="title-area">
 		<li class="name">
-			<h1><a href="main_suche.php?aufruf=1"><i class="fi-refresh "></i>  DMS</a></h1>
+			<?php
+				echo "<h1><a href=\"main_suche.php?aufruf=1\"><i class=\"fi-refresh \"></i> ".abfrageEinstellung("tabellenNameKurz")."</a></h1>";
+			?>
 		</li>
 		<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
 	</ul>
@@ -301,9 +303,11 @@
 	$editStatus=abfrageEinstellung("editStatus");
 	getSpaltenDMS();
 ?>
-<div class="row">
+<div class="row collapse">
 	<fieldset>
-		<legend>DMS Tabelle</legend>
+		<?php
+			echo "<legend>".abfrageEinstellung("tabellenNameLang")."</legend>";
+		?>
 		<div class="row">
 			<div class="small-12 large-12 columns"\>
 				<dl class="sub-nav">
@@ -335,12 +339,11 @@
 //--------------------------------------------------------------------------------------------------------------------
 // Tabellenüberschrift einfügen
 //--------------------------------------------------------------------------------------------------------------------
-		echo "<div class=\"row\">";
+		echo "<div class=\"row collapse\">";
 			foreach ($spaltenName as $i => $spalte) {
 				// Aufteilung im Grid festelgen (Gilt auf für die Spaltendarstellung weiter unten)
 				switch ($spaltenTyp[$i]) {
 					case 'auswahl':
-						$gridAuswahl="<div class=\"small-8 large-3 columns\">";
 						// Sortierung
 						$b=chr(64+$spaltenID[$i]);
 						if ($sortierung==$spaltenName[$i]) {
@@ -348,7 +351,6 @@
 						}
 						break;
 					case 'auswahlStruktur':
-						$gridAuswahlStruktur="<div class=\"small-8 large-3 columns\">";
 						// Sortierung
 						$b=chr(64+$spaltenID[$i]);
 						if ($sortierung==$spaltenName[$i]) {
@@ -356,35 +358,30 @@
 						}
 						break;
 					case 'text':
-						$gridText="<div class=\"small-12 large-8 columns\">";
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
 							$sortClause=" ORDER BY ".$spaltenName[$i];
 						}
 						break;
 					case 'url':
-						$gridText="<div class=\"small-12 large-8 columns\">";
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
 							$sortClause=" ORDER BY ".$spaltenName[$i];
 						}
 						break;
 					case 'dokurl':
-						$gridText="<div class=\"small-12 large-8 columns\">";
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
 							$sortClause=" ORDER BY ".$spaltenName[$i];
 						}
 						break;						
 					case 'zahl':
-						$gridZahl="<div class=\"small-3 large-1 columns\">";
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
 							$sortClause=" ORDER BY ".$spaltenName[$i];
 						}
 						break;
 					case 'datum':
-						$gridDatum="<div class=\"small-6 large-3 columns\">";
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
 							$sortClause=" ORDER BY ".$spaltenName[$i];
@@ -394,67 +391,81 @@
 				// Button einfügen			
 				switch ($spaltenTyp[$i]) {
 					case 'auswahl':
-						echo $spaltenBreite[$i];
-						if($sortierung==$spaltenName[$i]) {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
-						} else {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						if ($spaltenErgebnisAnzeige[$i]==1) {
+							echo $spaltenBreite[$i];
+							if($sortierung==$spaltenName[$i]) {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
+							} else {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand secondary\">".$spaltenBeschreibung[$i]."</a>";
+							}
+							echo "</div>";
 						}
-						echo "</div>";
 						break;
 					case 'auswahlStruktur':
-						echo $spaltenBreite[$i];
-						if($sortierung==$spaltenName[$i]) {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
-						} else {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						if ($spaltenErgebnisAnzeige[$i]==1) {
+							echo $spaltenBreite[$i];
+							if($sortierung==$spaltenName[$i]) {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
+							} else {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand secondary\">".$spaltenBeschreibung[$i]."</a>";
+							}
+							echo "</div>";
 						}
-						echo "</div>";
 						break;
 					case 'text':
-						echo $spaltenBreite[$i];
-						if($sortierung==$spaltenName[$i]) {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
-						} else {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						if ($spaltenErgebnisAnzeige[$i]==1) {
+							echo $spaltenBreite[$i];
+							if($sortierung==$spaltenName[$i]) {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
+							} else {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand expand secondary\">".$spaltenBeschreibung[$i]."</a>";
+							}
+							echo "</div>";
 						}
-						echo "</div>";
 						break;
 					case 'url':
-						echo $spaltenBreite[$i];
-						if($sortierung==$spaltenName[$i]) {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
-						} else {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						if ($spaltenErgebnisAnzeige[$i]==1) {
+							echo $spaltenBreite[$i];
+							if($sortierung==$spaltenName[$i]) {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
+							} else {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand secondary\">".$spaltenBeschreibung[$i]."</a>";
+							}
+							echo "</div>";
 						}
-						echo "</div>";
 						break;
 					case 'dokurl':
-						echo $spaltenBreite[$i];
-						if($sortierung==$spaltenName[$i]) {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
-						} else {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						if ($spaltenErgebnisAnzeige[$i]==1) {
+							echo $spaltenBreite[$i];
+							if($sortierung==$spaltenName[$i]) {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
+							} else {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand secondary\">".$spaltenBeschreibung[$i]."</a>";
+							}
+							echo "</div>";
 						}
-						echo "</div>";
 						break;
-					case 'zahl':						
-						echo $spaltenBreite[$i];
-						if($sortierung==$spaltenName[$i]) {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
-						} else {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+					case 'zahl':
+						if ($spaltenErgebnisAnzeige[$i]==1) {						
+							echo $spaltenBreite[$i];
+							if($sortierung==$spaltenName[$i]) {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
+							} else {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand secondary\">".$spaltenBeschreibung[$i]."</a>";
+							}
+							echo "</div>";
 						}
-						echo "</div>";
 						break;
 					case 'datum':
-						echo $spaltenBreite[$i];
-						if($sortierung==$spaltenName[$i]) {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
-						} else {
-							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						if ($spaltenErgebnisAnzeige[$i]==1) {
+							echo $spaltenBreite[$i];
+							if($sortierung==$spaltenName[$i]) {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
+							} else {
+								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand secondary\">".$spaltenBeschreibung[$i]."</a>";
+							}
+							echo "</div>";
 						}
-						echo "</div>";
 						break;						
 				}
 			}
@@ -546,47 +557,61 @@
 						switch ($spaltenTyp[$i])
 						{
 							case 'auswahl':
-								$spalteX=$spaltenName[$i];
-								echo $spaltenBreite[$i];
-									echo "<p>",$row->$spalteX,"</p>";
-								echo "</div>";
+								if ($spaltenErgebnisAnzeige[$i]==1) {
+									$spalteX=$spaltenName[$i];
+									echo $spaltenBreite[$i];
+										echo "<p>",$row->$spalteX,"</p>";
+									echo "</div>";
+								}
 								break;
 							case 'auswahlStruktur':
-								$spalteX=$spaltenName[$i];
-								echo $spaltenBreite[$i];
-									echo "<p>",$row->$spalteX,"</p>";
-								echo "</div>";
+								if ($spaltenErgebnisAnzeige[$i]==1) {
+									$spalteX=$spaltenName[$i];
+									echo $spaltenBreite[$i];
+										echo "<p>",$row->$spalteX,"</p>";
+									echo "</div>";
+								}
 								break;
 							case 'text':
-								$spalteX=$spaltenName[$i];
-								echo $spaltenBreite[$i];
-									echo "<p>",$row->$spalteX,"</p>";
-								echo "</div>";
+								if ($spaltenErgebnisAnzeige[$i]==1) {
+									$spalteX=$spaltenName[$i];
+									echo $spaltenBreite[$i];
+										echo "<p>",$row->$spalteX,"</p>";
+									echo "</div>";
+								}
 								break;
 							case 'url':
-								$spalteX=$spaltenName[$i];
-								echo $spaltenBreite[$i];
-									echo "<a class=\"fi-link\" href=\"",$row->$spalteX,"\"> ".$row->$spalteX."</a>";									
-								echo "</div>";
+								if ($spaltenErgebnisAnzeige[$i]==1) {
+									$spalteX=$spaltenName[$i];
+									echo $spaltenBreite[$i];
+										echo "<a class=\"fi-link\" href=\"",$row->$spalteX,"\"></a>";									
+									echo "</div>";
+								}
 								break;
 							case 'dokurl':
-								$spalteX=$spaltenName[$i];
-								echo $spaltenBreite[$i];
-									$extension=explode(".",$row->Datei);
-									echo "<a class=\"tiny secondary expand fi-download\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"> ".$row->$spalteX."</a>";
-								echo "</div>";
-								break;								
+								if ($spaltenErgebnisAnzeige[$i]==1) {
+									$spalteX=$spaltenName[$i];
+									echo $spaltenBreite[$i];
+										$extension=explode(".",$row->Datei);
+										echo "<a class=\"tiny secondary expand fi-download\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"> ".$row->$spalteX."</a>";
+									echo "</div>";
+								}
+								break;
 							case 'zahl':
-								$spalteX=$spaltenName[$i];
-								echo $spaltenBreite[$i];
-									echo "<p>",$row->$spalteX,"</p>";
-								echo "</div>";
+								if ($spaltenErgebnisAnzeige[$i]==1) {
+									$spalteX=$spaltenName[$i];
+									echo $spaltenBreite[$i];
+										echo "<p>",$row->$spalteX,"</p>";
+									echo "</div>";
+								}
 								break;
 							case 'datum':
-								$spalteX=$spaltenName[$i];
-								echo $spaltenBreite[$i];
-									echo "<p>",date($datumsFormat,strtotime($row->$spalteX)),"</p>";
-								echo "</div>";
+								if ($spaltenErgebnisAnzeige[$i]==1) {
+									$spalteX=$spaltenName[$i];
+									echo $spaltenBreite[$i];
+										echo "<p>",date($datumsFormat,strtotime($row->$spalteX)),"</p>";
+									echo "</div>";
+								}
 								break;
 						}						
 					}
@@ -696,24 +721,26 @@
 				}
 			}
 		?>
-		<div class="pagination-centered">
-			<ul class="pagination">		
-				<?php
-					echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage-$maxEintraegeProSite,"\">&laquo;</a></li>";
-					for ($i=0; $i < $menge; $i=$i+$maxEintraegeProSite) { 								
-						if($i>=$startPage and $i <$startPage+$maxEintraegeProSite){
-							echo "<li class=\"current\"><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
+		<div class="row">
+			<div class="pagination-centered">
+				<ul class="pagination">		
+					<?php
+						echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage-$maxEintraegeProSite,"\">&laquo;</a></li>";
+						for ($i=0; $i < $menge; $i=$i+$maxEintraegeProSite) { 								
+							if($i>=$startPage and $i <$startPage+$maxEintraegeProSite){
+								echo "<li class=\"current\"><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
+							}
+							else{
+								echo "<li><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
+							}
 						}
-						else{
-							echo "<li><a href=\"main_suche.php?startPage=",$i,"\">",$i,"</a></li>";
-						}
-					}
-					echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage+$maxEintraegeProSite,"\">&raquo;</a></li>";							
-				?>
-			</ul>
+						echo "<li class=\"arrow\"><a href=\"main_suche.php?startPage=",$startPage+$maxEintraegeProSite,"\">&raquo;</a></li>";							
+					?>
+				</ul>
+			</div>
 		</div>
 	</fieldset>
-</div>	
+</div>
 
 <!-- Suchformular -->
 <div id="suchModal" class="reveal-modal" data-reveal>
@@ -747,13 +774,5 @@
   <script src="js/foundation/foundation.dropdown.js"></script>
   <script src="js/foundation/foundation.reveal.js"></script>
   <script>$(document).foundation();</script>  
-  
-<!--script src="js/vendor/jquery.js"></script>
-<script src="http://foundation.zurb.com/docs/assets/js/all.js"></script>
-<script>$(document).foundation();</script-->  
 
-
-	<!--script src="/js/vendor/jquery.js"></script>
-	<script src="/js/foundation/foundation.min.js"></script-->
-	
 </body>
