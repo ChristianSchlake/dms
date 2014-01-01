@@ -1,14 +1,16 @@
 <?php
 //	session_start();
 	include("sub_init_database.php");
+	include("functions.php");
 ?>
-
 
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf8"/>
 	<meta name="viewport" content="width=device-width">
-
-	<title>DMS - auswahlliste ändern</title>
+	
+	<?php
+		echo "<title>".abfrageEinstellung("tabellenNameLang")."</title>";
+	?>
 
 	<link rel="stylesheet" href="css/foundation.css">
 	<link rel="stylesheet" href="icons/foundation-icons.css"/>
@@ -30,10 +32,6 @@
 </head>
 
 <body>
-
-<?php
-	include("functions.php");
-?>
 
 <?php	
 /*-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -*/
