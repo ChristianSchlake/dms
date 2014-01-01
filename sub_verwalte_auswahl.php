@@ -173,11 +173,11 @@
 </div>
 
 
-<div class="row">
-	<div class="small-6 large-6 columns">	
+<div class="row collapse">
+	<div class="small-2 large-2 columns">	
 		<h2>ID</h2>
 	</div>
-	<div class="small-6 large-6 columns">	
+	<div class="small-10 large-10 columns">	
 		<h2>Wert</h2>
 	</div>
 	<hr>
@@ -195,18 +195,18 @@
 	if($editStatus==0){							
 		while($row = mysql_fetch_object($ergebnis))
 		{
-			echo "<div class=\"row\">";
-				echo "<div class=\"small-6 large-6 columns\">";
+			echo "<div class=\"row collapse\">";
+				echo "<div class=\"small-1 large-1 columns\">";
 					echo "<p>",$row->$spalteX,"</p>";
 				echo "</div>";
-				echo "<div class=\"small-6 large-6 columns\">";
+				echo "<div class=\"small-11 large-11 columns\">";
 					echo "<p>",$row->$tabelle,"</p>";
 				echo "</div>";
 			echo "</div>";
 		}
 	} else {
 		while($row = mysql_fetch_object($ergebnis)) {
-			echo "<div class=\"row\">";
+			echo "<div class=\"row collapse\">";
 				echo "<form class=\"custom\" action=\"sub_verwalte_auswahl.php\" method=\"get\">";
 					echo "<input type=\"hidden\" name=\"id\" value=\"".$row->$spalteX."\"\>";
 					echo "<input type=\"hidden\" name=\"editStatus\" value=\"1\">";
