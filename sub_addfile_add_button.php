@@ -77,7 +77,7 @@
 	</div>
 
 	<div class="row">
-		<!div class="small-12 large-12 columns">		
+		<div class="small-12 large-12 columns">		
 			<fieldset>
 				<legend>File Upload</legend>
 					<input type="file" name="userfile"/>
