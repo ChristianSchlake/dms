@@ -36,7 +36,7 @@
 						$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
 						echo $spaltenBreite[$i];
 							$b=chr(64+$spaltenID[$i]);
-							$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];
+							$abfrage="SELECT DISTINCT ".$spaltenName[$i].",".$spaltenName[$i]."ID FROM ".$spaltenName[$i]." ORDER BY ".$spaltenName[$i];
 							$ergebnis = mysql_query($abfrage);
 							$spalteX=$spaltenName[$i]."ID";
 							echo "<label>".$spaltenBeschreibung[$i]."</label>";				
@@ -61,6 +61,28 @@
 						echo "</div>";
 					}
 					break;
+				case "url":
+					if ($spaltenFormularAnzeige[$i]==1) {
+						$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
+						echo $spaltenBreite[$i];
+							echo "<label>".$spaltenBeschreibung[$i]."</label>";
+							echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
+						echo "</div>";
+					}
+					break;
+				case "dokurl":
+					if ($spaltenFormularAnzeige[$i]==1) {
+						$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
+						echo $spaltenBreite[$i];
+							echo "<label>".$spaltenBeschreibung[$i]."</label>";
+							echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
+							echo "<fieldset>";
+							echo "<legend>File Upload</legend>";
+							echo "<input type=\"file\" name=\"userfile\"/>";
+							echo "</fieldset>";							
+						echo "</div>";
+					}
+					break;					
 				case "datum":
 					if ($spaltenFormularAnzeige[$i]==1) {
 						$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
@@ -76,14 +98,14 @@
 	?>
 	</div>
 
-	<div class="row">
+	<!--div class="row">
 		<div class="small-12 large-12 columns">		
 			<fieldset>
 				<legend>File Upload</legend>
 					<input type="file" name="userfile"/>
 			</fieldset>
 		</div>
-	</div>
+	</div-->
 	
 	<div class="row">	
 		<div class="small-12 large-12 columns">

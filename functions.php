@@ -48,15 +48,7 @@
 			}
 		}
 	}
-			
-/*	function checkAutoIncrementStatus($spalte) {
-		// prüft ob eine Spalte angezeigt werden soll
-		$abfrage="SHOW FIELDS FROM typenDefinition where Extra like \"auto_increment\" AND Field like \"".$spalte."\"";
-		$ergebnis=mysql_query($abfrage);
-		$zahl=mysql_num_rows($ergebnis);
-		return $zahl;
-	}*/
-	
+
 	function getSpaltenDMS() {
 		global $spaltenName, $spaltenTyp, $spaltenBeschreibung, $spaltenSuchwert, $spaltenID, $spaltenEingabewert, $spaltenFormularAnzeige, $spaltenBreite;
 		$spaltenName=array();
@@ -104,6 +96,12 @@
 					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
 					break;
 				case 'text':
+					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
+					break;
+				case 'url':
+					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
+					break;
+				case 'dokurl':
 					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
 					break;
 				case 'datum':

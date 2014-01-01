@@ -66,6 +66,15 @@
 	$fileUpLoad=abfrageEinstellungADDFile("fileupload");
 	if ($fileUpLoad==1) {
 		$allesRichtig=true;
+		// neue ID ermitteln
+		$MaxID=mysql_query("SELECT MAX(id) FROM DMS");
+		$MaxID=mysql_fetch_array($MaxID, MYSQL_BOTH);
+		$MaxID=$MaxID[0];
+		$MaxID=$MaxID+1;
+		// Dateinamen ersetllen
+		$path_parts=pathinfo($_FILES['userfile']['name']);
+		$extension=$path_parts['extension'];
+		$datei="upload/".$MaxID.".".$extension;
 		foreach ($spaltenEingabewert as $i => $spalte) {
 			switch ($spaltenTyp[$i]) {
 				case "zahl":
@@ -100,6 +109,29 @@
 						}
 					}
 					break;
+				case "url":
+					if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
+					}
+					break;					
+				case "dokurl":
+					if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						} else {
+							if(is_uploaded_file($_FILES['userfile']['tmp_name'])){
+								move_uploaded_file($_FILES['userfile']['tmp_name'], $datei);
+							} else {
+								echo "<span class=\"round alert label\">Fehler beim Dateiupload</span>";
+								$allesRichtig=false;
+							}
+						}
+					}
+					break;
 				case "datum":
 					if ($spaltenFormularAnzeige[$i]==1) {
 						if (checkDateX($spalte)!=true) {
@@ -110,48 +142,39 @@
 					break;
 			}
 		}		
-		if ($allesRichtig==true) {
-			if(is_uploaded_file($_FILES['userfile']['tmp_name'])){
-				// neue ID ermitteln
-				$MaxID=mysql_query("SELECT MAX(id) FROM DMS");
-				$MaxID=mysql_fetch_array($MaxID, MYSQL_BOTH);
-				$MaxID=$MaxID[0];
-				$MaxID=$MaxID+1;
-				// Dateinamen ersetllen
-				$path_parts=pathinfo($_FILES['userfile']['name']);
-				$extension=$path_parts['extension'];
-				$datei="upload/".$MaxID.".".$extension;
-				move_uploaded_file($_FILES['userfile']['tmp_name'], $datei);
-				$spaltenClause="";
-				$spaltenValueClause="";
-				getSpaltenDMS();
-				foreach ($spaltenName as $i => $spalte) {
-					
-					switch ($spaltenTyp[$i]) {
-						case 'einstellung':
-							break;
-						case 'datum':
-							if ($spaltenFormularAnzeige[$i]==1) {
-								$spaltenClause=$spaltenClause.",".$spaltenName[$i];
-								$spaltenValueClause=$spaltenValueClause.",STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";								
-							}
-							break;
-						default:
-							if ($spaltenFormularAnzeige[$i]==1) {
-								$spaltenClause=$spaltenClause.",".$spaltenName[$i];
-								$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
-							}
-							break;
-					}
+		if ($allesRichtig==true) {				
+			$spaltenClause="";
+			$spaltenValueClause="";
+			getSpaltenDMS();
+			foreach ($spaltenName as $i => $spalte) {
+				switch ($spaltenTyp[$i]) {
+					case 'einstellung':
+						break;
+					case 'datum':
+						if ($spaltenFormularAnzeige[$i]==1) {
+							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
+							$spaltenValueClause=$spaltenValueClause.",STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";								
+						}
+						break;
+					case 'dokurl':
+						if ($spaltenFormularAnzeige[$i]==1) {
+							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
+							$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
+						}
+						break;
+					default:
+						if ($spaltenFormularAnzeige[$i]==1) {
+							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
+							$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
+						}
+						break;
 				}
-				$spaltenClause=substr($spaltenClause,1);
-				$spaltenValueClause=substr($spaltenValueClause,1);
-				$aufruf="INSERT INTO DMS (".$spaltenClause.",Datei,id) VALUES (".$spaltenValueClause.",\"".$_FILES['userfile']['name']."\",".$MaxID.")";
-//				echo $aufruf;
-				$eintragen = mysql_query($aufruf);
-			} else {
-				echo "<span class=\"round alert label\">Fehler beim Dateiupload</span>";
 			}
+			$spaltenClause=substr($spaltenClause,1);
+			$spaltenValueClause=substr($spaltenValueClause,1);
+			$aufruf="INSERT INTO DMS (".$spaltenClause.",id) VALUES (".$spaltenValueClause.",".$MaxID.")";
+//			echo $aufruf;
+			$eintragen = mysql_query($aufruf);
 		} else {
 			echo "<br>";
 			echo "<span class=\"round alert label\">Das Dokument wurde nicht eingecheckt!</span>";
@@ -185,6 +208,18 @@
 					}					
 					break;
 				case "text":
+					if ($spalte=="") {
+						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+						$allesRichtig=false;
+					}
+					break;
+				case "url":
+					if ($spalte=="") {
+						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+						$allesRichtig=false;
+					}
+					break;
+				case "dokurl":
 					if ($spalte=="") {
 						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 						$allesRichtig=false;
@@ -327,6 +362,20 @@
 							$sortClause=" ORDER BY ".$spaltenName[$i];
 						}
 						break;
+					case 'url':
+						$gridText="<div class=\"small-12 large-8 columns\">";
+						// Sortierung						
+						if ($sortierung==$spaltenName[$i]) {
+							$sortClause=" ORDER BY ".$spaltenName[$i];
+						}
+						break;
+					case 'dokurl':
+						$gridText="<div class=\"small-12 large-8 columns\">";
+						// Sortierung						
+						if ($sortierung==$spaltenName[$i]) {
+							$sortClause=" ORDER BY ".$spaltenName[$i];
+						}
+						break;						
 					case 'zahl':
 						$gridZahl="<div class=\"small-3 large-1 columns\">";
 						// Sortierung						
@@ -340,7 +389,7 @@
 						if ($sortierung==$spaltenName[$i]) {
 							$sortClause=" ORDER BY ".$spaltenName[$i];
 						}
-						break;						
+						break;
 				}
 				// Button einfügen			
 				switch ($spaltenTyp[$i]) {
@@ -363,6 +412,24 @@
 						echo "</div>";
 						break;
 					case 'text':
+						echo $spaltenBreite[$i];
+						if($sortierung==$spaltenName[$i]) {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
+						} else {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						}
+						echo "</div>";
+						break;
+					case 'url':
+						echo $spaltenBreite[$i];
+						if($sortierung==$spaltenName[$i]) {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
+						} else {
+							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small secondary\">".$spaltenBeschreibung[$i]."</a></th>";
+						}
+						echo "</div>";
+						break;
+					case 'dokurl':
 						echo $spaltenBreite[$i];
 						if($sortierung==$spaltenName[$i]) {
 							echo "<th><a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button small\">".$spaltenBeschreibung[$i]."</a></th>";								
@@ -427,6 +494,16 @@
 						$selectClause=$selectClause.",".$spaltenName[$i];
 						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
 						break;
+					case 'url':
+						$b=chr(64+$spaltenID[$i]);
+						$selectClause=$selectClause.",".$spaltenName[$i];
+						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
+						break;
+					case 'dokurl':
+						$b=chr(64+$spaltenID[$i]);
+						$selectClause=$selectClause.",".$spaltenName[$i].",Datei";
+						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
+						break;						
 					case 'datum':
 						$b=chr(64+$spaltenID[$i]);
 						$selectClause=$selectClause.",".$spaltenName[$i];
@@ -440,11 +517,11 @@
 							// wenn nur ein Wert, dann nach dem genauen Datum suchen!
 							$whereClause=str_replace(" AND Z.".$spaltenName[$i]." >= STR_TO_DATE("," AND STR_TO_DATE(Z.".$spaltenName[$i].",'%Y-%m-%d') = STR_TO_DATE(", $whereClause); 
 						}						
-						break;						
+						break;
 				}									
 			}
 			$selectClause=ltrim($selectClause, ",");
-			$innerJoin="SELECT ".$selectClause.",id, Datei FROM DMS AS Z".$innerJoin." WHERE ";
+			$innerJoin="SELECT ".$selectClause." FROM DMS AS Z".$innerJoin." WHERE ";
 			$whereClause=ltrim($whereClause, " AND ");
 			$abfrage=$innerJoin.$whereClause.$sortClause;						
 			// Suchergebnis in einer Tabelle darstellen
@@ -466,7 +543,6 @@
 					echo "<div class=\"row\">";
 					foreach ($spaltenName as $i => $spalte)
 					{
-						$extension=explode(".",$row->Datei);
 						switch ($spaltenTyp[$i])
 						{
 							case 'auswahl':
@@ -487,6 +563,19 @@
 									echo "<p>",$row->$spalteX,"</p>";
 								echo "</div>";
 								break;
+							case 'url':
+								$spalteX=$spaltenName[$i];
+								echo $spaltenBreite[$i];
+									echo "<a class=\"fi-link\" href=\"",$row->$spalteX,"\"> ".$row->$spalteX."</a>";									
+								echo "</div>";
+								break;
+							case 'dokurl':
+								$spalteX=$spaltenName[$i];
+								echo $spaltenBreite[$i];
+									$extension=explode(".",$row->Datei);
+									echo "<a class=\"tiny secondary expand fi-download\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"> ".$row->$spalteX."</a>";
+								echo "</div>";
+								break;								
 							case 'zahl':
 								$spalteX=$spaltenName[$i];
 								echo $spaltenBreite[$i];
@@ -501,9 +590,6 @@
 								break;
 						}						
 					}
-					echo "<div class=\"small-12 large-12 columns\">";
-						echo "<a class=\"button secondary step fi-download expand size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></a>";
-					echo "</div>";
 				echo "</div>";
 				echo "<hr>";
 				}
@@ -557,6 +643,28 @@
 											echo "</div>";
 										}
 										break;
+									case 'dokurl':
+										$spalteX=$spaltenName[$i];
+										$eingabeWert=$row->$spalteX;
+										if ($spaltenFormularAnzeige[$i]==1) {										
+											echo $spaltenBreite[$i];
+												echo "<label>".$spaltenBeschreibung[$i]."</label>";
+												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
+												$extension=explode(".",$row->Datei);
+												echo "<button class=\"tiny secondary expand fi-download size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></button>";												
+											echo "</div>";
+										}
+										break;
+									case 'url':
+										$spalteX=$spaltenName[$i];
+										$eingabeWert=$row->$spalteX;
+										if ($spaltenFormularAnzeige[$i]==1) {										
+											echo $spaltenBreite[$i];
+												echo "<label>".$spaltenBeschreibung[$i]."</label>";
+												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
+											echo "</div>";
+										}
+										break;
 									case 'zahl':
 										$spalteX=$spaltenName[$i];
 										$eingabeWert=$row->$spalteX;
@@ -579,10 +687,8 @@
 										break;
 								}						
 							}
-							echo "<input type=\"hidden\" value=\"2\" name=\"fileuploadADD\">";
-							echo "<input type=\"hidden\" value=\"".$row->id."\" name=\"idEDI\">";
-							$extension=explode(".",$row->Datei);
-							echo "<a class=\"button step fi-download expand size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></a>";														
+							echo "<input type=\"hidden\" value=\"2\" name=\"fileuploadADD\">"; //fileupload 2 --> daten ändern; fileupload 1 --> neue Daten anlegen
+							echo "<input type=\"hidden\" value=\"".$row->id."\" name=\"idEDI\">";							
 							echo "<button class=\"step fi-page-edit expand size-X\" type=\"Submit\"></button>";
 						echo "</form>";
 					echo "</div>";

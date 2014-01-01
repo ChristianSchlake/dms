@@ -63,6 +63,7 @@
 					$b=chr(64+$spaltenID[$i]);
 					$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];
 					$ergebnis = mysql_query($abfrage);
+//					echo $abfrage;
 					while($row = mysql_fetch_object($ergebnis)) {
 						$nameX=$row->$spaltenName[$i];
 					}
@@ -85,6 +86,40 @@
 				echo "</div>";
 				break;
 			case "text":
+				echo $spaltenBreite[$i];
+					echo "<form action=\"main_suche.php\" method=\"get\">";
+						if ($spaltenSuchwert[$i]!="%") {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+						} else {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
+						}								
+						if($spaltenSuchwert[$i]!="%") {
+							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
+						}
+						else {
+							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
+						}
+					echo "</form>";
+				echo "</div>";
+				break;
+			case "url":
+				echo $spaltenBreite[$i];
+					echo "<form action=\"main_suche.php\" method=\"get\">";
+						if ($spaltenSuchwert[$i]!="%") {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+						} else {
+							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
+						}								
+						if($spaltenSuchwert[$i]!="%") {
+							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
+						}
+						else {
+							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
+						}
+					echo "</form>";
+				echo "</div>";
+				break;
+			case "dokurl":
 				echo $spaltenBreite[$i];
 					echo "<form action=\"main_suche.php\" method=\"get\">";
 						if ($spaltenSuchwert[$i]!="%") {
