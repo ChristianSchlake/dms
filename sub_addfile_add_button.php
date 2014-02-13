@@ -1,6 +1,6 @@
 <form action="main_suche.php" method="POST" class="custom" enctype="multipart/form-data">
-	<input type="hidden" value="1" name="fileuploadADD">
 	<div class="row collapse">
+		<input type="hidden" value="1" name="fileuploadADD">
 		<?php
 			$pos1=strpos($abfrage, "ORDER BY");
 			$abfrageTMP=substr($abfrage,0, $pos1);
@@ -12,21 +12,19 @@
 			foreach ($spaltenBeschreibung as $i => $spalt) {
 				switch ($spaltenTyp[$i]) {
 					case "zahl":
-						if ($spaltenFormularAnzeige[$i]==1) {
-							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);					
-							if ($spaltenFormularAnzeige[$i]==1) {
-								echo $spaltenBreite[$i];
-									echo "<label>".$spaltenBeschreibung[$i]."</label>";
-									echo "<input type=\"zahl\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
-								echo "</div>";
-							}
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
+							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								echo "<input type=\"zahl\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
+							echo "</div>";
 						}
 						break;
 					case "auswahlStruktur":
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
-							echo $spaltenBreite[$i];
-								echo "<label>".$spaltenBeschreibung[$i]."</label>";												
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
 								echo "<select class=\"medium\" name=\"".$spaltenName[$i]."ADD\">";
 								generateListOrdnerFormular(0,$eingabeWert,$spaltenName[$i]);
 								echo "</select>";						
@@ -34,9 +32,9 @@
 						}
 						break;
 					case "auswahl":
-						if ($spaltenFormularAnzeige[$i]==1) {						
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
-							echo $spaltenBreite[$i];
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								$b=chr(64+$spaltenID[$i]);
 								$abfrage="SELECT DISTINCT ".$spaltenName[$i].",".$spaltenName[$i]."ID FROM ".$spaltenName[$i]." ORDER BY ".$spaltenName[$i];
 								$ergebnis = mysql_query($abfrage);
@@ -55,43 +53,43 @@
 							}
 						break;
 					case "text":
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
-							echo $spaltenBreite[$i];
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";
 								echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
 							echo "</div>";
 						}
 						break;
 					case "url":
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
-							echo $spaltenBreite[$i];
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";
 								echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
 							echo "</div>";
 						}
 						break;
 					case "dokurl":
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
-							echo $spaltenBreite[$i];
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";
 								echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
-								echo "<input type=\"file\" name=\"userfile\"/>";						
+								echo "<input type=\"file\" name=\"userfile\"/>";
 							echo "</div>";
 						}
 						break;					
 					case "datum":
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
-							echo $spaltenBreite[$i];
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";
 								echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
 							echo "</div>";
 						}
 						break;
-				}				
+				}
 			}
 		?>
 	</div>

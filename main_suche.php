@@ -41,8 +41,11 @@
 			reset_suche();
 		}
 //		echo $key,"-->",$value,"<br>";
+		if ($value=="") {
+			$value="%";
+		}
 		$abfrage="UPDATE typenDefinition SET suchwert='".$value."' WHERE name='".$key."'";
-		mysql_query($abfrage);	
+		mysql_query($abfrage);
 	}
 
 // File Upload ausführen
@@ -75,7 +78,7 @@
 		foreach ($spaltenEingabewert as $i => $spalte) {
 			switch ($spaltenTyp[$i]) {
 				case "zahl":
-					if ($spaltenFormularAnzeige[$i]==1) {					
+					if ($spaltenBreiteSuchFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -83,7 +86,7 @@
 					}
 					break;
 				case "auswahlStruktur":
-					if ($spaltenFormularAnzeige[$i]==1) {
+					if ($spaltenBreiteSuchFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -91,7 +94,7 @@
 					}
 					break;
 				case "auswahl":
-					if ($spaltenFormularAnzeige[$i]==1) {					
+					if ($spaltenBreiteSuchFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -99,7 +102,7 @@
 					}
 					break;
 				case "text":
-					if ($spaltenFormularAnzeige[$i]==1) {
+					if ($spaltenBreiteSuchFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -107,7 +110,7 @@
 					}
 					break;
 				case "url":
-					if ($spaltenFormularAnzeige[$i]==1) {
+					if ($spaltenBreiteSuchFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -115,7 +118,7 @@
 					}
 					break;					
 				case "dokurl":
-					if ($spaltenFormularAnzeige[$i]==1) {
+					if ($spaltenBreiteSuchFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -130,7 +133,7 @@
 					}
 					break;
 				case "datum":
-					if ($spaltenFormularAnzeige[$i]==1) {
+					if ($spaltenBreiteSuchFormular[$i]!="") {
 						if (checkDateX($spalte)!=true) {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -138,7 +141,7 @@
 					}
 					break;
 			}
-		}		
+		}
 		if ($allesRichtig==true) {				
 			$spaltenClause="";
 			$spaltenValueClause="";
@@ -148,19 +151,19 @@
 					case 'einstellung':
 						break;
 					case 'datum':
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteSuchFormular[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
 							$spaltenValueClause=$spaltenValueClause.",STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";								
 						}
 						break;
 					case 'dokurl':
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteSuchFormular[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
 							$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
 						}
 						break;
 					default:
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteSuchFormular[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
 							$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
 						}
@@ -185,7 +188,7 @@
 //			echo $i,"-->",$spalte,"<br>";
 			switch ($spaltenTyp[$i]) {
 				case "zahl":
-					if ($spaltenFormularAnzeige[$i]==1) {					
+					if ($spaltenBreiteShow[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -231,18 +234,18 @@
 			}
 		}
 		if ($allesRichtig==true) {
-			$abfrage="UPDATE DMS SET dir=".$ordner.",TypID=".$Typ.",Beschreibung=\"".$Beschreibung."\",Herausgeber=".$herausgeber.",Herausgabedatum=STR_TO_DATE('".$herausgabedatum."', '%d.%m.%Y') WHERE id=".$id; 
+//			$abfrage="UPDATE DMS SET dir=".$ordner.",TypID=".$Typ.",Beschreibung=\"".$Beschreibung."\",Herausgeber=".$herausgeber.",Herausgabedatum=STR_TO_DATE('".$herausgabedatum."', '%d.%m.%Y') WHERE id=".$id; 
 			foreach ($spaltenName as $i => $spalte) {				
 				switch ($spaltenTyp[$i]) {
 					case 'einstellung':
 						break;
 					case 'datum':
-						if ($spaltenFormularAnzeige[$i]==1) {
+						if ($spaltenBreiteShow[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i]."=STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";
 						}
 						break;
 					default:
-						if ($spaltenFormularAnzeige[$i]==1) {						
+						if ($spaltenBreiteShow[$i]!="") {						
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i]."=\"".$spaltenEingabewert[$i]."\"";
 						}
 						break;
@@ -250,7 +253,7 @@
 			}
 			$spaltenClause=substr($spaltenClause,1);
 			$aufruf="UPDATE DMS SET ".$spaltenClause." WHERE id=".$idEdit;
-//			echo $aufruf;
+			echo $aufruf;
 			$eintragen = mysql_query($aufruf);
 		}		
 	}
@@ -388,8 +391,8 @@
 				// Button einfügen			
 				switch ($spaltenTyp[$i]) {
 					case 'auswahl':
-						if ($spaltenErgebnisAnzeige[$i]==1) {
-							echo $spaltenBreite[$i];
+						if ($spaltenBreiteShow[$i]!="") {
+							echo $spaltenBreiteShow[$i];
 							if($sortierung==$spaltenName[$i]) {
 								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
 							} else {
@@ -399,8 +402,8 @@
 						}
 						break;
 					case 'auswahlStruktur':
-						if ($spaltenErgebnisAnzeige[$i]==1) {
-							echo $spaltenBreite[$i];
+						if ($spaltenBreiteShow[$i]!="") {
+							echo $spaltenBreiteShow[$i];
 							if($sortierung==$spaltenName[$i]) {
 								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
 							} else {
@@ -410,8 +413,8 @@
 						}
 						break;
 					case 'text':
-						if ($spaltenErgebnisAnzeige[$i]==1) {
-							echo $spaltenBreite[$i];
+						if ($spaltenBreiteShow[$i]!="") {
+							echo $spaltenBreiteShow[$i];
 							if($sortierung==$spaltenName[$i]) {
 								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
 							} else {
@@ -421,8 +424,8 @@
 						}
 						break;
 					case 'url':
-						if ($spaltenErgebnisAnzeige[$i]==1) {
-							echo $spaltenBreite[$i];
+						if ($spaltenBreiteShow[$i]!="") {
+							echo $spaltenBreiteShow[$i];
 							if($sortierung==$spaltenName[$i]) {
 								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
 							} else {
@@ -432,8 +435,8 @@
 						}
 						break;
 					case 'dokurl':
-						if ($spaltenErgebnisAnzeige[$i]==1) {
-							echo $spaltenBreite[$i];
+						if ($spaltenBreiteShow[$i]!="") {
+							echo $spaltenBreiteShow[$i];
 							if($sortierung==$spaltenName[$i]) {
 								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
 							} else {
@@ -443,8 +446,8 @@
 						}
 						break;
 					case 'zahl':
-						if ($spaltenErgebnisAnzeige[$i]==1) {						
-							echo $spaltenBreite[$i];
+						if ($spaltenBreiteShow[$i]!="") {
+							echo $spaltenBreiteShow[$i];
 							if($sortierung==$spaltenName[$i]) {
 								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
 							} else {
@@ -454,8 +457,8 @@
 						}
 						break;
 					case 'datum':
-						if ($spaltenErgebnisAnzeige[$i]==1) {
-							echo $spaltenBreite[$i];
+						if ($spaltenBreiteShow[$i]!="") {
+							echo $spaltenBreiteShow[$i];
 							if($sortierung==$spaltenName[$i]) {
 								echo "<a href=\"main_suche.php?sortierung=".$spaltenName[$i]."&sortierfolge=".$sortierfolgeNEU."\" class=\"button tiny expand\">".$spaltenBeschreibung[$i]."</a>";
 							} else {
@@ -531,7 +534,8 @@
 			$selectClause=ltrim($selectClause, ",");
 			$innerJoin="SELECT ".$selectClause." FROM DMS AS Z".$innerJoin." WHERE ";
 			$whereClause=ltrim($whereClause, " AND ");
-			$abfrage=$innerJoin.$whereClause.$sortClause;						
+			$abfrage=$innerJoin.$whereClause.$sortClause;	
+					
 			// Suchergebnis in einer Tabelle darstellen
 			$startPage=abfrageEinstellung("startPage");
 			$maxEintraegeProSite=abfrageEinstellung("maxEintraege");
@@ -543,7 +547,6 @@
 			$abfrage=$abfrage." LIMIT $startPage, $maxEintraegeProSite";
 			$ergebnis = mysql_query($abfrage);
 			$datumsFormat=abfrageEinstellung("datumFormat");
-//			echo $abfrage;
 			if($editStatus==0)
 			{					
 				while($row = mysql_fetch_object($ergebnis))
@@ -554,58 +557,58 @@
 						switch ($spaltenTyp[$i])
 						{
 							case 'auswahl':
-								if ($spaltenErgebnisAnzeige[$i]==1) {
+								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
-									echo $spaltenBreite[$i];
+									echo $spaltenBreiteShow[$i];
 										echo "<p>",$row->$spalteX,"</p>";
 									echo "</div>";
 								}
 								break;
 							case 'auswahlStruktur':
-								if ($spaltenErgebnisAnzeige[$i]==1) {
+								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
-									echo $spaltenBreite[$i];
+									echo $spaltenBreiteShow[$i];
 										echo "<p>",$row->$spalteX,"</p>";
 									echo "</div>";
 								}
 								break;
 							case 'text':
-								if ($spaltenErgebnisAnzeige[$i]==1) {
+								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
-									echo $spaltenBreite[$i];
+									echo $spaltenBreiteShow[$i];
 										echo "<p>",$row->$spalteX,"</p>";
 									echo "</div>";
 								}
 								break;
 							case 'url':
-								if ($spaltenErgebnisAnzeige[$i]==1) {
+								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
-									echo $spaltenBreite[$i];
+									echo $spaltenBreiteShow[$i];
 										echo "<a class=\"fi-link\" href=\"",$row->$spalteX,"\"></a>";									
 									echo "</div>";
 								}
 								break;
 							case 'dokurl':
-								if ($spaltenErgebnisAnzeige[$i]==1) {
+								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
-									echo $spaltenBreite[$i];
+									echo $spaltenBreiteShow[$i];
 										$extension=explode(".",$row->Datei);
 										echo "<a class=\"tiny secondary expand fi-download\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"> ".$row->$spalteX."</a>";
 									echo "</div>";
 								}
 								break;
 							case 'zahl':
-								if ($spaltenErgebnisAnzeige[$i]==1) {
+								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
-									echo $spaltenBreite[$i];
+									echo $spaltenBreiteShow[$i];
 										echo "<p>",$row->$spalteX,"</p>";
 									echo "</div>";
 								}
 								break;
 							case 'datum':
-								if ($spaltenErgebnisAnzeige[$i]==1) {
+								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
-									echo $spaltenBreite[$i];
+									echo $spaltenBreiteShow[$i];
 										echo "<p>",date($datumsFormat,strtotime($row->$spalteX)),"</p>";
 									echo "</div>";
 								}
@@ -617,8 +620,8 @@
 				}
 			} else {
 				while($row = mysql_fetch_object($ergebnis)) {
-					echo "<div class=\"row\">";
-						echo "<form class=\"custom\" action=\"main_suche.php\" method=\"post\">";
+					echo "<form action=\"main_suche.php\" method=\"POST\" class=\"custom\">";
+						echo "<div class=\"row\">";
 							foreach ($spaltenName as $i => $spalte)
 							{						
 								switch ($spaltenTyp[$i]) 
@@ -626,10 +629,10 @@
 									case 'auswahl':
 										$spalteX=$spaltenName[$i]."ID";
 										$eingabeWert=$row->$spalteX;
-										if ($spaltenFormularAnzeige[$i]==1) {											
+										if ($spaltenBreiteShow[$i]!="") {
 											$abfrageX="SELECT DISTINCT * FROM ".$spaltenName[$i]." ORDER BY ".$spaltenName[$i];
 											$ergebnisX = mysql_query($abfrageX);
-											echo $spaltenBreite[$i];
+											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";											
 												echo "<select class=\"medium\" name=\"".$spaltenName[$i]."EDI\">";
 													while($rowX = mysql_fetch_object($ergebnisX)) {
@@ -646,8 +649,8 @@
 									case 'auswahlStruktur':
 										$spalteX=$spaltenName[$i]."ID";
 										$selectedItem=$row->$spalteX;
-										if ($spaltenFormularAnzeige[$i]==1) {										
-											echo $spaltenBreite[$i];
+											if ($spaltenBreiteShow[$i]!="") {
+											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
 												echo "<select class=\"medium\" name=\"".$spaltenName[$i]."EDI\">";
 												generateListOrdnerFormular(0,$selectedItem,$spaltenName[$i]);
@@ -658,8 +661,8 @@
 									case 'text':
 										$spalteX=$spaltenName[$i];
 										$eingabeWert=$row->$spalteX;
-										if ($spaltenFormularAnzeige[$i]==1) {										
-											echo $spaltenBreite[$i];
+										if ($spaltenBreiteShow[$i]!="") {
+											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
 												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
 											echo "</div>";
@@ -668,20 +671,20 @@
 									case 'dokurl':
 										$spalteX=$spaltenName[$i];
 										$eingabeWert=$row->$spalteX;
-										if ($spaltenFormularAnzeige[$i]==1) {										
-											echo $spaltenBreite[$i];
+										if ($spaltenBreiteShow[$i]!="") {
+											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
 												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
 												$extension=explode(".",$row->Datei);
-												echo "<button class=\"tiny secondary expand fi-download size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></button>";												
+//												echo "<button class=\"tiny secondary expand fi-download size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></button>";												
 											echo "</div>";
 										}
 										break;
 									case 'url':
 										$spalteX=$spaltenName[$i];
 										$eingabeWert=$row->$spalteX;
-										if ($spaltenFormularAnzeige[$i]==1) {										
-											echo $spaltenBreite[$i];
+										if ($spaltenBreiteShow[$i]!="") {
+											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
 												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
 											echo "</div>";
@@ -690,8 +693,8 @@
 									case 'zahl':
 										$spalteX=$spaltenName[$i];
 										$eingabeWert=$row->$spalteX;
-										if ($spaltenFormularAnzeige[$i]==1) {										
-											echo $spaltenBreite[$i];
+										if ($spaltenBreiteShow[$i]!="") {
+											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
 												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
 											echo "</div>";
@@ -700,8 +703,8 @@
 									case 'datum':
 										$spalteX=$spaltenName[$i];
 										$eingabeWert=$row->$spalteX;
-										if ($spaltenFormularAnzeige[$i]==1) {										
-											echo $spaltenBreite[$i];
+										if ($spaltenBreiteShow[$i]!="") {
+											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
 												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".date($datumsFormat,strtotime($eingabeWert))."\" name=\"".$spaltenName[$i]."EDI\">";
 											echo "</div>";
@@ -712,8 +715,8 @@
 							echo "<input type=\"hidden\" value=\"2\" name=\"fileuploadADD\">"; //fileupload 2 --> daten ändern; fileupload 1 --> neue Daten anlegen
 							echo "<input type=\"hidden\" value=\"".$row->id."\" name=\"idEDI\">";							
 							echo "<button class=\"step fi-page-edit expand size-X\" type=\"Submit\"></button>";
-						echo "</form>";
-					echo "</div>";
+						echo "</div>";
+					echo "</form>";
 					echo "<hr>";
 				}
 			}
@@ -752,7 +755,7 @@
 <!-- Formular neue Datei -->
 <div id="newFileModal" class="reveal-modal" data-reveal>
 	<fieldset>
-	<legend>Suche</legend>
+	<legend>neues Dokument</legend>
 		<?php
 			include("sub_addfile_add_button.php");
 		?>		

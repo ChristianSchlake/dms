@@ -1,159 +1,127 @@
-<?php
-	echo "<div class=\"row collapse\">";
-	$pos1=strpos($abfrage, "ORDER BY");
-	$abfrageTMP=substr($abfrage,0, $pos1);
-	$pos1=strpos($abfrageTMP, "FROM DMS");
-	$abfrageTMP=" ".substr($abfrageTMP, $pos1);
-	getSpaltenDMS();
-	foreach ($spaltenBeschreibung as $i => $spalt) {
-		switch ($spaltenTyp[$i]) {
-			case "zahl":
-				echo $spaltenBreite[$i];
-					echo "<form action=\"main_suche.php\" method=\"get\">";
-						if ($spaltenSuchwert[$i]!="%") {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
-						} else {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";										
-						}
-						if($spaltenSuchwert[$i]!="%") {
-							echo "<div class=\"row collapse\">";
-								echo "<div class=\"small-9 large-9 columns\">";
-									echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
-								echo "</div>";
-								echo "<div class=\"small-3 large-3 columns\">";
-									echo "<a href=\"main_suche.php?".$spaltenName[$i]."=%\" class=\"button prefix\">reset</i></a>";
-								echo "</div>";
+<form action="main_suche.php" method="GET" class="custom">
+	<div class="row collapse">
+		<?php
+
+			$pos1=strpos($abfrage, "ORDER BY");
+			$abfrageTMP=substr($abfrage,0, $pos1);
+			$pos1=strpos($abfrageTMP, "FROM DMS");
+			$abfrageTMP=" ".substr($abfrageTMP, $pos1);
+
+
+			getSpaltenDMS();
+			foreach ($spaltenBeschreibung as $i => $spalt) {
+				switch ($spaltenTyp[$i]) {
+					case "zahl":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							echo $spaltenBreiteSuchFormular[$i];					
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								if ($spaltenSuchwert[$i]!="%") {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+								} else {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";										
+								}
 							echo "</div>";
-							
 						}
-						else {
-							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
+						break;
+					case "auswahlStruktur":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							$eingabeWert=abfrageEinstellung($spaltenName[$i]);
+							echo $spaltenBreiteSuchFormular[$i];
+								$b=chr(64+$spaltenID[$i]);
+								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];					
+								$ergebnis = mysql_query($abfrage);
+								$spalteX=$spaltenName[$i]."ID";
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								echo "<select class=\"medium\" name=\"".$spaltenName[$i]."\">";
+									echo "<option value=".$row->$spalteX.">%</option>";
+									while($row = mysql_fetch_object($ergebnis)) {
+										if ($row->$spalteX==$eingabeWert) {
+											echo "<option selected value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";									
+										} else {						
+											echo "<option value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";
+										}
+									}
+								echo "</select>";
+							echo "</div>";
 						}
-					echo "</form>";
+						break;
+					case "auswahl":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							$eingabeWert=abfrageEinstellung($spaltenName[$i]);
+							echo $spaltenBreiteSuchFormular[$i];
+								$b=chr(64+$spaltenID[$i]);
+								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];					
+								$ergebnis = mysql_query($abfrage);
+								$spalteX=$spaltenName[$i]."ID";
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";				
+								echo "<select class=\"medium\" name=\"".$spaltenName[$i]."\">";
+									echo "<option value=".$row->$spalteX.">%</option>";
+									while($row = mysql_fetch_object($ergebnis)) {
+										if ($row->$spalteX==$eingabeWert) {
+											echo "<option selected value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";									
+										} else {						
+											echo "<option value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";
+										}
+									}
+								echo "</select>";
+							echo "</div>";
+						}
+						break;
+					case "text":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							echo $spaltenBreiteSuchFormular[$i];
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								if ($spaltenSuchwert[$i]!="%") {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+								} else {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
+								}								
+							echo "</div>";
+						}
+						break;
+					case "url":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							echo $spaltenBreiteSuchFormular[$i];
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								if ($spaltenSuchwert[$i]!="%") {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+								} else {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
+								}								
+							echo "</div>";
+						}
+						break;
+					case "dokurl":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							echo $spaltenBreiteSuchFormular[$i];
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								if ($spaltenSuchwert[$i]!="%") {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+								} else {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
+								}								
+							echo "</div>";
+						}
+						break;
+					case "datum":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							echo $spaltenBreiteSuchFormular[$i];
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								if ($spaltenSuchwert[$i]!="%") {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
+								} else {
+									echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";										
+								}
+							echo "</div>";
+						}
+						break;
+				}
+			}
+			echo "<div class=\"row collapse\">";
+				echo "<div class=\"small-12 large-12 columns\">";
+					echo "<button class=\"button expand\" type=\"Submit\">suchen</button>";
 				echo "</div>";
-				break;
-			case "auswahlStruktur":				
-				echo $spaltenBreite[$i];
-					$b=chr(64+$spaltenID[$i]);
-					$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];
-					$ergebnis = mysql_query($abfrage);
-					while($row = mysql_fetch_object($ergebnis)) {
-						$nameX=$row->$spaltenName[$i];
-					}
-					if($spaltenSuchwert[$i]!="%") {
-						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown\">",$nameX,"</a>";
-					}
-					else {
-						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown secondary\">".$spaltenBeschreibung[$i]."</a>";
-					}
-					echo "<ul id=",$spaltenName[$i]," class=\"f-dropdown\" data-dropdown-content>";
-						if($spaltenSuchwert[$i]!="%"){
-							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=%&startPage=0\">&rarr; reset </a></li>";
-						}						
-						$ergebnis = mysql_query($abfrage);
-						$spalteX=$spaltenName[$i]."ID";						
-						while($row = mysql_fetch_object($ergebnis)) {			
-							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=",$row->$spalteX,"&startPage=0","\">",$row->$spaltenName[$i],"</a></li>";
-						}
-					echo "</ul>";
-				echo "</div>";
-				break;
-			case "auswahl":
-				echo $spaltenBreite[$i];	
-					$b=chr(64+$spaltenID[$i]);
-					$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];
-					$ergebnis = mysql_query($abfrage);
-//					echo $abfrage;
-					while($row = mysql_fetch_object($ergebnis)) {
-						$nameX=$row->$spaltenName[$i];
-					}
-					if($spaltenSuchwert[$i]!="%") {
-						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown\">",$nameX,"</a>";
-					}
-					else {
-						echo "<a href=\"#\" data-dropdown=\"",$spaltenName[$i],"\" class=\"tiny button dropdown secondary\">".$spaltenBeschreibung[$i]."</a>";
-					}
-					echo "<ul id=",$spaltenName[$i]," class=\"f-dropdown\" data-dropdown-content>";
-						if($spaltenSuchwert[$i]!="%"){
-							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=%&startPage=0\">&rarr; reset </a></li>";
-						}
-						$ergebnis = mysql_query($abfrage);
-						$spalteX=$spaltenName[$i]."ID";
-						while($row = mysql_fetch_object($ergebnis)) {			
-							echo "<li><a href=\"main_suche.php?",$spaltenName[$i],"=",$row->$spalteX,"&startPage=0","\">",$row->$spaltenName[$i],"</a></li>";
-						}
-					echo "</ul>";
-				echo "</div>";
-				break;
-			case "text":
-				echo $spaltenBreite[$i];
-					echo "<form action=\"main_suche.php\" method=\"get\">";
-						if ($spaltenSuchwert[$i]!="%") {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
-						} else {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
-						}								
-						if($spaltenSuchwert[$i]!="%") {
-							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
-						}
-						else {
-							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
-						}
-					echo "</form>";
-				echo "</div>";
-				break;
-			case "url":
-				echo $spaltenBreite[$i];
-					echo "<form action=\"main_suche.php\" method=\"get\">";
-						if ($spaltenSuchwert[$i]!="%") {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
-						} else {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
-						}								
-						if($spaltenSuchwert[$i]!="%") {
-							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
-						}
-						else {
-							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
-						}
-					echo "</form>";
-				echo "</div>";
-				break;
-			case "dokurl":
-				echo $spaltenBreite[$i];
-					echo "<form action=\"main_suche.php\" method=\"get\">";
-						if ($spaltenSuchwert[$i]!="%") {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
-						} else {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";
-						}								
-						if($spaltenSuchwert[$i]!="%") {
-							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
-						}
-						else {
-							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
-						}
-					echo "</form>";
-				echo "</div>";
-				break;
-			case "datum":
-				echo $spaltenBreite[$i];
-					echo "<form action=\"main_suche.php\" method=\"get\">";
-						if ($spaltenSuchwert[$i]!="%") {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\" value=\"",$spaltenSuchwert[$i],"\">";
-						} else {
-							echo "<input type=\"text\" placeholder=\"",$spaltenBeschreibung[$i],"\" name=\"",$spaltenName[$i],"\">";										
-						}
-						if($spaltenSuchwert[$i]!="%") {
-							echo "<input class=\"button prefix\" value=\"suchen\" type=\"Submit\">";
-						}
-						else {
-							echo "<input class=\"button prefix secondary\" value=\"suchen\" type=\"Submit\">";
-						}
-					echo "</form>";
-				echo "</div>";
-				break;
-		}
-	}	
-	echo "</div>";	
+			echo "</div>";
+		echo "</div>";	
+	echo "</form>";
 ?>

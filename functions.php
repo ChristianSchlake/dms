@@ -50,16 +50,17 @@
 	}
 
 	function getSpaltenDMS() {
-		global $spaltenName, $spaltenTyp, $spaltenBeschreibung, $spaltenSuchwert, $spaltenID, $spaltenEingabewert, $spaltenFormularAnzeige, $spaltenBreite, $spaltenErgebnisAnzeige;
+		global $spaltenName, $spaltenTyp, $spaltenBeschreibung, $spaltenSuchwert, $spaltenID, $spaltenEingabewert, $spaltenBreiteShow, $spaltenBreiteSuchFormular, $spaltenBreiteNeuesDokumentFormular;
 		$spaltenName=array();
 		$spaltenTyp=array();
 		$spaltenBeschreibung=array();
 		$spaltenSuchwert=array();	
 		$spaltenID=array();
 		$spaltenEingabewert=array();
-		$spaltenFormularAnzeige=array();
-		$spaltenBreite=array();
-		$spaltenErgebnisAnzeige=array();
+		$spaltenBreiteShow=array();
+		$spaltenBreiteSuchFormular=array();
+		$spaltenBreiteNeuesDokumentFormular=array();
+		$editStatus=abfrageEinstellung("editStatus");
 		// Spalten ermitteln
 		$result = mysql_query("SELECT * FROM typenDefinition ORDER BY reihenfolge");
 		while ($row = mysql_fetch_object($result)) {
@@ -69,17 +70,36 @@
 			$spaltenSuchwert[]=$row->suchwert;
 			$spaltenID[]=$row->id;
 			$spaltenEingabewert[]=$row->eingabewert;
-			$spaltenFormularAnzeige[]=$row->eingabeFormular;
-			$spaltenBreite[]=$row->spaltenbreite;
-			$spaltenErgebnisAnzeige[]=$row->ergebnisListe;
-		}
-		foreach ($spaltenBreite as $i => $value) {
-			$breite=explode(",", $spaltenBreite[$i]);
-			if ($breite[0]>0 and $breite[1]>0 and $breite[0]<13 and $breite[1]<13 and is_numeric($breite[0])==true and is_numeric($breite[1])==true) {
-				$spaltenBreite[$i]="<div class=\"small-".$breite[1]." large-".$breite[0]." columns\">";
-//				$spaltenBreite[$i]="<div class=\"small-8 large-3 columns\">";	
+			$spaltenBreiteSuchFormular[]=$row->spaltenbreiteSuchFormular;
+			$spaltenBreiteNeuesDokumentFormular[]=$row->spaltenbreiteNeuesDokumentFormular;
+			if ($editStatus==0) {
+				$spaltenBreiteShow[]=$row->spaltenbreiteShow;
 			} else {
-				$spaltenBreite[$i]="<div class=\"small-12 large-12 columns\">";
+				$spaltenBreiteShow[]=$row->spaltenbreiteEdit;
+			}
+		}
+		foreach ($spaltenBreiteShow as $i => $value) {
+			if ($value!="") {
+				$breite=explode(",", $spaltenBreiteShow[$i]);
+				if ($breite[0]>0 and $breite[1]>0 and $breite[0]<13 and $breite[1]<13 and is_numeric($breite[0])==true and is_numeric($breite[1])==true) {
+					$spaltenBreiteShow[$i]="<div class=\"small-".$breite[1]." large-".$breite[0]." columns\">";
+				}
+			}
+		}
+		foreach ($spaltenBreiteSuchFormular as $i => $value) {
+			if ($value!="") {
+				$breite=explode(",", $spaltenBreiteSuchFormular[$i]);
+				if ($breite[0]>0 and $breite[1]>0 and $breite[0]<13 and $breite[1]<13 and is_numeric($breite[0])==true and is_numeric($breite[1])==true) {
+					$spaltenBreiteSuchFormular[$i]="<div class=\"small-".$breite[1]." large-".$breite[0]." columns\">";
+				}
+			}
+		}
+		foreach ($spaltenBreiteNeuesDokumentFormular as $i => $value) {
+			if ($value!="") {
+				$breite=explode(",", $spaltenBreiteNeuesDokumentFormular[$i]);
+				if ($breite[0]>0 and $breite[1]>0 and $breite[0]<13 and $breite[1]<13 and is_numeric($breite[0])==true and is_numeric($breite[1])==true) {
+					$spaltenBreiteNeuesDokumentFormular[$i]="<div class=\"small-".$breite[1]." large-".$breite[0]." columns\">";
+				}
 			}
 		}
 	}
@@ -131,7 +151,6 @@
 		";
 		$ergebnis = mysql_query($abfrage);
 		while($row = mysql_fetch_object($ergebnis)) {
-			/*echo "<li><label>",$row->name,"</label></li>";*/
 			$abrage_sohn="
 				SELECT DISTINCT
 					a.son,
