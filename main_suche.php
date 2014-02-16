@@ -325,10 +325,13 @@
 						?>
 	                </ul>
 	        </li>
-			<li class="divider hide-for-small"></li>			
+			<li class="divider"></li>
+		    <li><a href="sub_einstellungen.php"><i class="fi-wrench "></i> Einstellungen</a></li>
+			<li class="divider"></li>
 			<a class="button secondary round" href="main_suche.php" data-reveal-id="suchModal"><i class="fi-page-search"></i> suchen</a>
 		</ul>
 		<ul class="right">
+			<li class="divider"></li>
 			<a class="button secondary round" href="main_suche.php" data-reveal-id="newFileModal"><i class="fi-page-add"></i> neues Dokument</a>
 		</ul>
 		
