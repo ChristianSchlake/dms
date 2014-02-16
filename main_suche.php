@@ -33,6 +33,13 @@
 
 <body>
 
+<script type="text/javascript">
+	function FensterOeffnen (Adresse) {
+		MeinFenster = window.open(Adresse, "Zweitfenster", "width=300,height=400,left=100,top=200");
+		MeinFenster.focus();
+	}
+</script>
+
 <?php	
 /*-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -*/
 /* Variablen eintragen */
@@ -650,8 +657,7 @@
 								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
 									echo $spaltenBreiteShow[$i];
-										$fileName=getFilenameByID($row->id);
-										echo "<a class=\"tiny secondary expand fi-download\" href=\"".$fileName."\"> ".$row->$spalteX."</a>";
+										echo "<a class=\"tiny secondary expand fi-download\" href=\"sub_openFile.php?id=".$row->id."\" onclick=\"FensterOeffnen(this.href); return false\"> ".$row->$spalteX."</a>";												
 									echo "</div>";
 								}
 								break;
@@ -739,9 +745,8 @@
 													echo "<div class=\"small-10 columns\">";
 														echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
 													echo "</div>";
-													$fileName=getFilenameByID($row->id);
 													echo "<div class=\"small-2 columns\">";
-														echo "<a class=\"button postfix\" href=\"".$fileName."\"><i class=\"fi-download size-X\"></i></a>";												
+														echo "<a class=\"button postfix\" href=\"sub_openFile.php?id=".$row->id."\" onclick=\"FensterOeffnen(this.href); return false\"><i class=\"fi-download size-X\"></i></a>";												
 													echo "</div>";
 												echo "</div>";
 											echo "</div>";
