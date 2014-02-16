@@ -78,7 +78,7 @@
 		foreach ($spaltenEingabewert as $i => $spalte) {
 			switch ($spaltenTyp[$i]) {
 				case "zahl":
-					if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -86,15 +86,31 @@
 					}
 					break;
 				case "auswahlStruktur":
-					if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
 						}					
 					}
 					break;
+				case "previewPic":
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						} else {
+							$path_parts=pathinfo($_FILES[$spalte]['name']);
+							$extensionPreview=$path_parts['extension'];
+							$dateiPreview="preview/".$spaltenName[$i]."_".$MaxID.".jpg";
+							$url=$spalte;
+							echo $url,"<br>";							
+							echo $dateiPreview;
+							file_put_contents($dateiPreview, fopen($url, 'r'));
+						}
+					}
+					break;
 				case "auswahl":
-					if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -102,7 +118,7 @@
 					}
 					break;
 				case "text":
-					if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -110,7 +126,7 @@
 					}
 					break;
 				case "url":
-					if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -118,7 +134,7 @@
 					}
 					break;					
 				case "dokurl":
-					if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 						if ($spalte=="") {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -133,7 +149,7 @@
 					}
 					break;
 				case "datum":
-					if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 						if (checkDateX($spalte)!=true) {
 							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
 							$allesRichtig=false;
@@ -151,19 +167,21 @@
 					case 'einstellung':
 						break;
 					case 'datum':
-						if ($spaltenBreiteSuchFormular[$i]!="") {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
 							$spaltenValueClause=$spaltenValueClause.",STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";								
 						}
 						break;
 					case 'dokurl':
-						if ($spaltenBreiteSuchFormular[$i]!="") {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
 							$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
 						}
 						break;
+					case 'previewPic':
+						break;
 					default:
-						if ($spaltenBreiteSuchFormular[$i]!="") {
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
 							$spaltenValueClause=$spaltenValueClause.",\"".$spaltenEingabewert[$i]."\"";
 						}
@@ -173,7 +191,7 @@
 			$spaltenClause=substr($spaltenClause,1);
 			$spaltenValueClause=substr($spaltenValueClause,1);
 			$aufruf="INSERT INTO DMS (".$spaltenClause.",id) VALUES (".$spaltenValueClause.",".$MaxID.")";
-//			echo $aufruf;
+			echo $aufruf;
 			$eintragen = mysql_query($aufruf);
 		} else {
 			echo "<br>";
@@ -196,39 +214,59 @@
 					}
 					break;
 				case "auswahlStruktur":
-					if ($spalte=="") {
-						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
-						$allesRichtig=false;
+					if ($spaltenBreiteShow[$i]!="") {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
+					}					
+					break;
+				case "previewPic":
+					if ($spaltenBreiteShow[$i]!="") {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
 					}					
 					break;
 				case "auswahl":
-					if ($spalte=="") {
-						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
-						$allesRichtig=false;
-					}					
+					if ($spaltenBreiteShow[$i]!="") {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
+					}
 					break;
 				case "text":
-					if ($spalte=="") {
-						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
-						$allesRichtig=false;
+					if ($spaltenBreiteShow[$i]!="") {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
 					}
 					break;
 				case "url":
-					if ($spalte=="") {
-						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
-						$allesRichtig=false;
+					if ($spaltenBreiteShow[$i]!="") {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
 					}
 					break;
 				case "dokurl":
-					if ($spalte=="") {
-						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
-						$allesRichtig=false;
+					if ($spaltenBreiteShow[$i]!="") {
+						if ($spalte=="") {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;
+						}
 					}
 					break;
 				case "datum":
-					if (checkDateX($spalte)!=true) {
-						echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
-						$allesRichtig=false;						
+					if ($spaltenBreiteShow[$i]!="") {
+						if (checkDateX($spalte)!=true) {
+							echo "<span class=\"round alert label\">Fehler ".$spaltenBeschreibung[$i]." nicht angegeben</span>";
+							$allesRichtig=false;						
+						}
 					}
 					break;
 			}
@@ -253,7 +291,7 @@
 			}
 			$spaltenClause=substr($spaltenClause,1);
 			$aufruf="UPDATE DMS SET ".$spaltenClause." WHERE id=".$idEdit;
-			echo $aufruf;
+//			echo $aufruf;
 			$eintragen = mysql_query($aufruf);
 		}		
 	}
@@ -347,32 +385,34 @@
 						// Sortierung
 						$b=chr(64+$spaltenID[$i]);
 						if ($sortierung==$spaltenName[$i]) {
-							$sortClause=" ORDER BY ".$b.".".$spaltenName[$i];
+							$sortClause=" ORDER BY upper(".$b.".".$spaltenName[$i].")";
 						}
 						break;
 					case 'auswahlStruktur':
 						// Sortierung
 						$b=chr(64+$spaltenID[$i]);
 						if ($sortierung==$spaltenName[$i]) {
-							$sortClause=" ORDER BY ".$b.".".$spaltenName[$i];
+							$sortClause=" ORDER BY upper(".$b.".".$spaltenName[$i].")";
 						}
+						break;
+					case 'previewPic':
 						break;
 					case 'text':
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
-							$sortClause=" ORDER BY ".$spaltenName[$i];
+							$sortClause=" ORDER BY upper(".$spaltenName[$i].")";
 						}
 						break;
 					case 'url':
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
-							$sortClause=" ORDER BY ".$spaltenName[$i];
+							$sortClause=" ORDER BY upper(".$spaltenName[$i].")";
 						}
 						break;
 					case 'dokurl':
 						// Sortierung						
 						if ($sortierung==$spaltenName[$i]) {
-							$sortClause=" ORDER BY ".$spaltenName[$i];
+							$sortClause=" ORDER BY upper(".$spaltenName[$i].")";
 						}
 						break;						
 					case 'zahl':
@@ -411,6 +451,8 @@
 							}
 							echo "</div>";
 						}
+						break;
+					case 'previewPic':
 						break;
 					case 'text':
 						if ($spaltenBreiteShow[$i]!="") {
@@ -495,6 +537,8 @@
 						$innerJoin=$innerJoin." INNER JOIN ".$spaltenName[$i]." AS ".$b." ON Z.".$spaltenName[$i]." = ".$b.".".$spaltenName[$i]."ID";
 						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
 						break;
+					case 'previewPic':
+						break;
 					case 'zahl':
 						$b=chr(64+$spaltenID[$i]);
 						$selectClause=$selectClause.",".$spaltenName[$i];
@@ -512,7 +556,7 @@
 						break;
 					case 'dokurl':
 						$b=chr(64+$spaltenID[$i]);
-						$selectClause=$selectClause.",".$spaltenName[$i].",Datei";
+						$selectClause=$selectClause.",".$spaltenName[$i];
 						$whereClause=$whereClause." AND Z.".$spaltenName[$i]." LIKE '".$spaltenSuchwert[$i]."'";
 						break;						
 					case 'datum':
@@ -547,8 +591,10 @@
 			$abfrage=$abfrage." LIMIT $startPage, $maxEintraegeProSite";
 			$ergebnis = mysql_query($abfrage);
 			$datumsFormat=abfrageEinstellung("datumFormat");
+//			echo $abfrage;
 			if($editStatus==0)
-			{					
+			{
+				// ANZEIGE DER TABELLE
 				while($row = mysql_fetch_object($ergebnis))
 				{
 					echo "<div class=\"row\">";
@@ -572,6 +618,15 @@
 									echo "</div>";
 								}
 								break;
+							case 'previewPic':
+								if ($spaltenBreiteShow[$i]!="") {
+									echo $spaltenBreiteShow[$i];
+										echo "<a class=\"th\" href=\"preview/".$spaltenName[$i]."_".$row->id.".jpg\">";
+											echo "<img src=\"preview/".$spaltenName[$i]."_".$row->id.".jpg\">";
+										echo "</a>";
+									echo "</div>";
+								}
+								break;
 							case 'text':
 								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
@@ -592,8 +647,8 @@
 								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
 									echo $spaltenBreiteShow[$i];
-										$extension=explode(".",$row->Datei);
-										echo "<a class=\"tiny secondary expand fi-download\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"> ".$row->$spalteX."</a>";
+										$fileName=getFilenameByID($row->id);
+										echo "<a class=\"tiny secondary expand fi-download\" href=\"".$fileName."\"> ".$row->$spalteX."</a>";
 									echo "</div>";
 								}
 								break;
@@ -619,9 +674,10 @@
 				echo "<hr>";
 				}
 			} else {
+				// EDITIEREN DER TABELLE
 				while($row = mysql_fetch_object($ergebnis)) {
 					echo "<form action=\"main_suche.php\" method=\"POST\" class=\"custom\">";
-						echo "<div class=\"row\">";
+						echo "<div class=\"row collapse\">";
 							foreach ($spaltenName as $i => $spalte)
 							{						
 								switch ($spaltenTyp[$i]) 
@@ -630,7 +686,7 @@
 										$spalteX=$spaltenName[$i]."ID";
 										$eingabeWert=$row->$spalteX;
 										if ($spaltenBreiteShow[$i]!="") {
-											$abfrageX="SELECT DISTINCT * FROM ".$spaltenName[$i]." ORDER BY ".$spaltenName[$i];
+											$abfrageX="SELECT DISTINCT * FROM ".$spaltenName[$i]." ORDER BY upper(".$spaltenName[$i].")";
 											$ergebnisX = mysql_query($abfrageX);
 											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";											
@@ -658,6 +714,8 @@
 											echo "</div>";
 										}
 										break;
+									case 'previewPic':
+										break;
 									case 'text':
 										$spalteX=$spaltenName[$i];
 										$eingabeWert=$row->$spalteX;
@@ -674,9 +732,15 @@
 										if ($spaltenBreiteShow[$i]!="") {
 											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
-												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
-												$extension=explode(".",$row->Datei);
-//												echo "<button class=\"tiny secondary expand fi-download size-X\" href=\"upload/",$row->id,".",$extension[count($extension)-1],"\"></button>";												
+												echo "<div class=\"row collapse\">";
+													echo "<div class=\"small-10 columns\">";
+														echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
+													echo "</div>";
+													$fileName=getFilenameByID($row->id);
+													echo "<div class=\"small-2 columns\">";
+														echo "<a class=\"button postfix\" href=\"".$fileName."\"><i class=\"fi-download size-X\"></i></a>";												
+													echo "</div>";
+												echo "</div>";
 											echo "</div>";
 										}
 										break;

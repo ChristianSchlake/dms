@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `typenDefinition` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `reihenfolge` int(3) DEFAULT NULL COMMENT 'Reihenfolge der anzzuzeigenden Spalten',
   `name` varchar(150) DEFAULT NULL COMMENT 'interner Name der Spalte',
-  `typ` varchar(100) DEFAULT NULL COMMENT 'Typ der Spalte (zahl, auswahl, auswahlStruktur, dokurl, einstellung, datum, text)',
+  `typ` varchar(100) DEFAULT NULL COMMENT 'Typ der Spalte (zahl, auswahl, auswahlStruktur, dokurl, einstellung, previewPic, datum, text)',
   `spaltenbreiteShow` varchar(100) NOT NULL DEFAULT '6,12' COMMENT 'Spaltenbreite im Anzeigemodus',
   `spaltenbreiteEdit` varchar(100) NOT NULL COMMENT 'Spaltenbreite im Editiermodus',
   `spaltenbreiteSuchFormular` varchar(100) NOT NULL COMMENT 'Spaltenbreite im Suchformular',

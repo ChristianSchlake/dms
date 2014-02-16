@@ -189,7 +189,7 @@
 		SELECT DISTINCT ".$spalteX.",".$tabelle."
 		FROM ".$tabelle."
 		WHERE ".$tabelle." LIKE \"".$suchWert."\"
-		ORDER BY ".$tabelle."
+		ORDER BY upper(".$tabelle.")
 	";
 	$ergebnis = mysql_query($abfrage);
 	if($editStatus==0){							

@@ -68,7 +68,7 @@
 			$spaltenTyp[]=$row->typ;
 			$spaltenBeschreibung[]=$row->beschreibung;
 			$spaltenSuchwert[]=$row->suchwert;
-			$spaltenID[]=$row->id;
+			$spaltenID[]=$row->reihenfolge;
 			$spaltenEingabewert[]=$row->eingabewert;
 			$spaltenBreiteSuchFormular[]=$row->spaltenbreiteSuchFormular;
 			$spaltenBreiteNeuesDokumentFormular[]=$row->spaltenbreiteNeuesDokumentFormular;
@@ -114,6 +114,9 @@
 					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
 					break;
 				case 'auswahlStruktur':
+					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
+					break;
+				case 'previewPic':
 					$aufruf=$aufruf."&".$spaltenName[$i]."=%";
 					break;
 				case 'zahl':
@@ -190,6 +193,12 @@
 			$result=$row->eingabewert;
 		}
 		return $result;
+	}
+
+	function getFilenameByID($id) {
+		foreach (glob("upload/".$id.".*") as $filename) {
+	    	return $filename;
+		}
 	}
 	
 ?>

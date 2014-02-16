@@ -31,12 +31,21 @@
 							echo "</div>";
 						}
 						break;
+					case "previewPic":
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
+							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
+							echo $spaltenBreiteNeuesDokumentFormular[$i];
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
+							echo "</div>";
+						}
+						break;
 					case "auswahl":
 						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
 							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								$b=chr(64+$spaltenID[$i]);
-								$abfrage="SELECT DISTINCT ".$spaltenName[$i].",".$spaltenName[$i]."ID FROM ".$spaltenName[$i]." ORDER BY ".$spaltenName[$i];
+								$abfrage="SELECT DISTINCT ".$spaltenName[$i].",".$spaltenName[$i]."ID FROM ".$spaltenName[$i]." ORDER BY upper(".$spaltenName[$i].")";
 								$ergebnis = mysql_query($abfrage);
 								$spalteX=$spaltenName[$i]."ID";
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";				

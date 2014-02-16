@@ -1,8 +1,16 @@
 <?php
+// mediaBase
+/*        $serverhost="192.168.2.111";
+        $db_user="mediaBase";
+        $db_pass="mediaBase";
+        $db_database="mediaBase";
+*/
+// DMS
         $serverhost="192.168.2.111";
         $db_user="xataface_DMS";
-        $db_pass="xataface_DMS";
+        $db_pass="UwGWKb4nLHehfL9P";
         $db_database="xataface_DMS";
+
 	$verbindung = mysql_connect ($serverhost,$db_user,$db_pass) or die ("keine Verbindung möglich. Benutzername oder Passwort sind falsch");
 
 	mysql_select_db($db_database) or die ("Die Datenbank existiert nicht.");

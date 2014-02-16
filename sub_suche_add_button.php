@@ -28,7 +28,29 @@
 							$eingabeWert=abfrageEinstellung($spaltenName[$i]);
 							echo $spaltenBreiteSuchFormular[$i];
 								$b=chr(64+$spaltenID[$i]);
-								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];					
+								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY upper(".$b.".".$spaltenName[$i].")";
+								$ergebnis = mysql_query($abfrage);
+								$spalteX=$spaltenName[$i]."ID";
+								echo "<label>".$spaltenBeschreibung[$i]."</label>";
+								echo "<select class=\"medium\" name=\"".$spaltenName[$i]."\">";
+									echo "<option value=".$row->$spalteX.">%</option>";
+									while($row = mysql_fetch_object($ergebnis)) {
+										if ($row->$spalteX==$eingabeWert) {
+											echo "<option selected value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";									
+										} else {						
+											echo "<option value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";
+										}
+									}
+								echo "</select>";
+							echo "</div>";
+						}
+						break;
+					case "previewPic":
+						if ($spaltenBreiteSuchFormular[$i]!="") {
+							$eingabeWert=abfrageEinstellung($spaltenName[$i]);
+							echo $spaltenBreiteSuchFormular[$i];
+								$b=chr(64+$spaltenID[$i]);
+								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY upper(".$b.".".$spaltenName[$i].")";
 								$ergebnis = mysql_query($abfrage);
 								$spalteX=$spaltenName[$i]."ID";
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";
@@ -50,7 +72,7 @@
 							$eingabeWert=abfrageEinstellung($spaltenName[$i]);
 							echo $spaltenBreiteSuchFormular[$i];
 								$b=chr(64+$spaltenID[$i]);
-								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY ".$b.".".$spaltenName[$i];					
+								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY upper(".$b.".".$spaltenName[$i].")";
 								$ergebnis = mysql_query($abfrage);
 								$spalteX=$spaltenName[$i]."ID";
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";				
