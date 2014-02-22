@@ -324,8 +324,11 @@
 							getSpaltenDMS();	
 							foreach ($spaltenName as $i => $value) {
 								switch ($spaltenTyp[$i]) {
-									case 'auswahl':								
+									case 'auswahl':
 											echo "<li><a href=\"sub_verwalte_auswahl.php?editStatus=0&tabelle=".$spaltenName[$i]."\">",$spaltenBeschreibung[$i]."</a></li>";
+										break;
+									case 'auswahlStruktur':
+											echo "<li><a href=\"sub_verwalte_auswahlStruktur.php?editStatus=0&tabelle=".$spaltenName[$i]."\">",$spaltenBeschreibung[$i]."</a></li>";
 										break;
 								}
 							}
@@ -718,7 +721,7 @@
 											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
 												echo "<select class=\"medium\" name=\"".$spaltenName[$i]."EDI\">";
-												generateListOrdnerFormular(0,$selectedItem,$spaltenName[$i]);
+												generateListOrdnerFormular(0,$selectedItem,$spaltenName[$i],0);
 												echo "</select>";
 											echo "</div>";
 										}

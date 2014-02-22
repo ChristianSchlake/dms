@@ -8,7 +8,7 @@
         }
 	}
 
-	function generateListOrdnerFormular($root_id = 0, $selectedItem, $tabelle) {
+	function generateListOrdnerFormular($root_id = 0, $selectedItem, $tabelle, $stufe) {
 		global $auswahl_ordner;
 		$abfrage="
 			SELECT DISTINCT
@@ -19,6 +19,86 @@
 				ON b.".$tabelle."ID = a.son
 			where a.father = $root_id
 		";
+		$ergebnis = mysql_query($abfrage);
+		$spacer=str_repeat("&nbsp;",8*$stufe);
+		while($row = mysql_fetch_object($ergebnis)) {
+			$abfrage_sohn="
+				SELECT DISTINCT
+					a.son,
+					b.".$tabelle."ID
+				FROM ".$tabelle."Structure AS a
+				INNER JOIN ".$tabelle." AS b
+					ON b.".$tabelle."ID = a.son
+				where a.father = $row->son
+			";
+			$ergebnis_sohn=mysql_query($abfrage_sohn);
+			$zahl=mysql_num_rows($ergebnis_sohn);
+			if($zahl>0) {
+				echo "<option DISABLED>",$spacer,$row->$tabelle,"</option>";
+				generateListOrdnerFormular($row->son, $selectedItem, $tabelle, $stufe+1);
+			   }
+			else {
+				//echo $abfrage_sohn;
+				$name=$row->son;
+				if($name==$selectedItem) {					
+					echo "<option selected value=".$row->son.">",$spacer,$row->$tabelle,"</option>";
+				}
+				else {
+					echo "<option value=".$row->son.">",$spacer,$row->$tabelle,"</option>";
+				}
+			}
+		}
+	}
+
+	function generateListOrdnerAenderung($root_id = 0, $selectedItem, $tabelle, $stufe, $mitSpacer) {
+		global $auswahl_ordner, $auswahlX;
+		$abfrage="
+			SELECT DISTINCT *
+			FROM ".$tabelle."Structure AS a
+			INNER JOIN ".$tabelle." AS b
+				ON b.".$tabelle."ID = a.son
+			where a.father = $root_id
+		";
+		$ergebnis = mysql_query($abfrage);
+		if ($mitSpacer==true) {
+			$spacer=str_repeat("&nbsp;",8*$stufe); // "&nbsp;" --> Leerzeichen (Non Breaking Space)
+		} else {
+			$spacer="";
+		}
+		while($row = mysql_fetch_object($ergebnis)) {
+			$abfrage_sohn="
+				SELECT DISTINCT *
+				FROM ".$tabelle."Structure AS a
+				INNER JOIN ".$tabelle." AS b
+					ON b.".$tabelle."ID = a.son
+				where a.father = $row->son
+			";
+			$ergebnis_sohn=mysql_query($abfrage_sohn);
+			$zahl=mysql_num_rows($ergebnis_sohn);
+			$father=$row->father;
+			$son=$row->son;
+			$dir=$row->dir;
+			$arrTeil=$son."|".$father."|".$spacer.$dir;
+			$auswahlX[]=$arrTeil;
+			if($zahl>0) {
+				generateListOrdnerAenderung($row->son, $selectedItem, $tabelle, $stufe+1, $mitSpacer);
+			}
+		}
+	}
+
+
+	function generateListOrdnerSuche($root_id = 0, $selectedItem, $tabelle) {
+		global $auswahl_ordner;
+		$abfrage="
+			SELECT DISTINCT
+				a.son,
+				b.".$tabelle."
+			FROM ".$tabelle."Structure AS a
+			INNER JOIN ".$tabelle." AS b
+				ON b.".$tabelle."ID = a.son
+			where a.father = $root_id
+		";
+//		echo "abfrage: ",$abfrage;
 		$ergebnis = mysql_query($abfrage);
 		while($row = mysql_fetch_object($ergebnis)) {
 			$abfrage_sohn="

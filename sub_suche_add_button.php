@@ -9,6 +9,15 @@
 
 
 			getSpaltenDMS();
+			$auswahlStrukturNeu=true;
+			foreach ($spaltenSuchwert as $i => $spalt) {
+				if ($spaltenBreiteSuchFormular[$i]!="") {
+					if ($spaltenSuchwert[$i]!="%") {
+						$auswahlStrukturNeu=false;
+					}
+				}
+			}
+
 			foreach ($spaltenBeschreibung as $i => $spalt) {
 				switch ($spaltenTyp[$i]) {
 					case "zahl":
@@ -28,19 +37,23 @@
 							$eingabeWert=abfrageEinstellung($spaltenName[$i]);
 							echo $spaltenBreiteSuchFormular[$i];
 								$b=chr(64+$spaltenID[$i]);
-								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY upper(".$b.".".$spaltenName[$i].")";
-								$ergebnis = mysql_query($abfrage);
 								$spalteX=$spaltenName[$i]."ID";
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";
 								echo "<select class=\"medium\" name=\"".$spaltenName[$i]."\">";
-									echo "<option value=".$row->$spalteX.">%</option>";
-									while($row = mysql_fetch_object($ergebnis)) {
-										if ($row->$spalteX==$eingabeWert) {
-											echo "<option selected value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";									
-										} else {						
-											echo "<option value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";
+								if ($auswahlStrukturNeu==false) {			
+									$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY upper(".$b.".".$spaltenName[$i].")";
+									$ergebnis = mysql_query($abfrage);
+										echo "<option value=".$row->$spalteX.">%</option>";
+										while($row = mysql_fetch_object($ergebnis)) {
+											if ($row->$spalteX==$eingabeWert) {
+												echo "<option selected value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";									
+											} else {						
+												echo "<option value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";
+											}
 										}
-									}
+								} else {
+									generateListOrdnerFormular(0,"%",$spaltenName[$i],0);
+								}
 								echo "</select>";
 							echo "</div>";
 						}
