@@ -16,7 +16,7 @@
 							$eingabeWert=abfrageEinstellungADDFile($spaltenName[$i]);
 							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";
-								echo "<input type=\"zahl\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
+								echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."ADD\">";
 							echo "</div>";
 						}
 						break;

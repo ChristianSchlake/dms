@@ -77,12 +77,29 @@
 			$zahl=mysql_num_rows($ergebnis_sohn);
 			$father=$row->father;
 			$son=$row->son;
-			$dir=$row->dir;
+			$dir=$row->$tabelle;
 			$arrTeil=$son."|".$father."|".$spacer.$dir;
 			$auswahlX[]=$arrTeil;
 			if($zahl>0) {
 				generateListOrdnerAenderung($row->son, $selectedItem, $tabelle, $stufe+1, $mitSpacer);
 			}
+		}
+	}
+
+	function generateListOrdnerAenderung_auswahl($tabelle) {
+		global $auswahlX;
+		$abfrage="
+			SELECT DISTINCT *
+			FROM ".$tabelle."
+		";
+		$ergebnis = mysql_query($abfrage);
+		while($row = mysql_fetch_object($ergebnis)) {
+			$id=$tabelle."ID";
+			$father="";
+			$son=$row->$id;
+			$dir=$row->$tabelle;
+			$arrTeil=$son."|".$father."|".$spacer.$dir;
+			$auswahlX[]=$arrTeil;
 		}
 	}
 

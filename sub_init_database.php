@@ -7,9 +7,9 @@
 */
 // DMS
         $serverhost="192.168.2.111";
-        $db_user="xataface_DMS";
-        $db_pass="UwGWKb4nLHehfL9P";
-        $db_database="xataface_DMS";
+        $db_user="finanzen";
+        $db_pass="finanzen";
+        $db_database="finanzen";
 
 	$verbindung = mysql_connect ($serverhost,$db_user,$db_pass) or die ("keine Verbindung möglich. Benutzername oder Passwort sind falsch");
 

@@ -187,6 +187,12 @@
 						break;
 					case 'previewPic':
 						break;
+					case 'zahl':
+						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
+							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
+							$spaltenValueClause=$spaltenValueClause.",\"".str_replace(",",".",$spaltenEingabewert[$i])."\"";
+						}
+						break;
 					default:
 						if ($spaltenBreiteNeuesDokumentFormular[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i];
@@ -198,7 +204,7 @@
 			$spaltenClause=substr($spaltenClause,1);
 			$spaltenValueClause=substr($spaltenValueClause,1);
 			$aufruf="INSERT INTO DMS (".$spaltenClause.",id) VALUES (".$spaltenValueClause.",".$MaxID.")";
-			echo $aufruf;
+//			echo $aufruf;
 			$eintragen = mysql_query($aufruf);
 		} else {
 			echo "<br>";
@@ -279,7 +285,6 @@
 			}
 		}
 		if ($allesRichtig==true) {
-//			$abfrage="UPDATE DMS SET dir=".$ordner.",TypID=".$Typ.",Beschreibung=\"".$Beschreibung."\",Herausgeber=".$herausgeber.",Herausgabedatum=STR_TO_DATE('".$herausgabedatum."', '%d.%m.%Y') WHERE id=".$id; 
 			foreach ($spaltenName as $i => $spalte) {				
 				switch ($spaltenTyp[$i]) {
 					case 'einstellung':
@@ -287,6 +292,11 @@
 					case 'datum':
 						if ($spaltenBreiteShow[$i]!="") {
 							$spaltenClause=$spaltenClause.",".$spaltenName[$i]."=STR_TO_DATE('".$spaltenEingabewert[$i]."', '%d.%m.%Y')";
+						}
+						break;
+					case 'zahl':
+						if ($spaltenBreiteShow[$i]!="") {						
+							$spaltenClause=$spaltenClause.",".$spaltenName[$i]."=\"".str_replace(",",".",$spaltenEingabewert[$i])."\"";
 						}
 						break;
 					default:
@@ -317,7 +327,25 @@
 	</ul>
 	<section class="top-bar-section">
 		<ul class="left">
-	        <li class="divider hide-for-small"></li>
+	        <li class="divider"></li>
+	        <li class="has-dropdown"><a href="#"><i class="fi-graph-bar "></i> Auswertungen</a>
+	                <ul class="dropdown">
+						<?php
+							getSpaltenDMS();	
+							foreach ($spaltenName as $i => $value) {
+								switch ($spaltenTyp[$i]) {
+									case 'auswahlStruktur':
+											echo "<li><a href=\"sub_auswertungStruktur.php?spaltenTyp=".$spaltenTyp[$i]."&tabelle=".$spaltenName[$i]."\">",$spaltenBeschreibung[$i]."</a></li>";
+										break;
+									case 'auswahl':
+											echo "<li><a href=\"sub_auswertungStruktur.php?spaltenTyp=".$spaltenTyp[$i]."&tabelle=".$spaltenName[$i]."\">",$spaltenBeschreibung[$i]."</a></li>";
+										break;
+								}
+							}
+						?>
+	                </ul>
+	        </li>
+	        <li class="divider"></li>
 	        <li class="has-dropdown"><a href="#"><i class="fi-list "></i> Listen verwalten</a>
 	                <ul class="dropdown">
 						<?php
@@ -668,7 +696,7 @@
 								if ($spaltenBreiteShow[$i]!="") {
 									$spalteX=$spaltenName[$i];
 									echo $spaltenBreiteShow[$i];
-										echo "<p>",$row->$spalteX,"</p>";
+										echo "<p>",str_replace(".",",",$row->$spalteX),"</p>";
 									echo "</div>";
 								}
 								break;
@@ -771,7 +799,7 @@
 										if ($spaltenBreiteShow[$i]!="") {
 											echo $spaltenBreiteShow[$i];
 												echo "<label>".$spaltenBeschreibung[$i]."</label>";
-												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".$eingabeWert."\" name=\"".$spaltenName[$i]."EDI\">";
+												echo "<input type=\"text\" placeholder=\"".$spaltenBeschreibung[$i]."\" value=\"".str_replace(".",",",$eingabeWert)."\" name=\"".$spaltenName[$i]."EDI\">";
 											echo "</div>";
 										}
 										break;

@@ -52,6 +52,7 @@
 											}
 										}
 								} else {
+									echo "<option selected value=%>%</option>";
 									generateListOrdnerFormular(0,"%",$spaltenName[$i],0);
 								}
 								echo "</select>";
