@@ -607,9 +607,12 @@
 						if (strtotime($datumX[0])>strtotime("01.01.0000")) {
 							$whereClause=$whereClause." AND Z.".$spaltenName[$i]." >= STR_TO_DATE('".$datumX[0]."','%d.%m.%Y')";
 						}
+						echo count($datumX),"<br>";
 						if (count($datumX)<2) {
 							$datumX[1]="01.01.0000";
 						}
+						echo count($datumX),"<br>";
+						print_r($datumX);
 						if (strtotime($datumX[1])>strtotime("01.01.0000")) {
 							$whereClause=$whereClause." AND Z.".$spaltenName[$i]." <= STR_TO_DATE('".$datumX[1]."','%d.%m.%Y')";
 						} else {

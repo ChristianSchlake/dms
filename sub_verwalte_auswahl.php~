@@ -56,10 +56,7 @@
 		}
 		if ($key=="editWert") {
 			$editWert=$value;
-		}
-		if ($key=="editWertID") {
-			$editWertID=$value;
-		}
+		}		
 		if ($key=="suchWert") {
 			$suchWert=$value;
 		}		
@@ -78,46 +75,23 @@
 		if ($key=="editNeuerWert"){
 			$editNeuerWert=$value;
 			$suchWert=$value;
-		}
-		if ($key=="idFatherOrig"){ //Original ID des Vaters
-			$idFatherOrig=$value;
-		}
-
+		}		
 		
 		
 	}
 	if ($updateStatus==1) {
 		$abfrage="UPDATE ".$tabelle." SET ".$tabelle." =\"".$editWert."\" WHERE ".$tabelle."ID=\"".$updateID."\"";
-		mysqli_query($verbindung, $abfrage);
-//		echo $abfrage,"<br>";
-		$abfrage="UPDATE ".$tabelle."Structure SET father=\"".$editWertID."\" WHERE son=\"".$updateID."\"";
-		mysqli_query($verbindung, $abfrage);
-//		echo $abfrage;
+		mysql_query($abfrage);
 	}
 
 	if ($deleteStatus==1) {
 		$abfrage="DELETE FROM ".$tabelle." WHERE ".$tabelle."ID=\"".$updateID."\"";
-//		echo $abfrage,"<br>";
-		mysqli_query($verbindung, $abfrage);
-		$abfrage="DELETE FROM ".$tabelle."Structure WHERE son=\"".$updateID."\" and father=\"".$idFatherOrig."\"";
-//		echo $abfrage;
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 	}
 	if ($editNeuerWert!="") {
-		$sql="select MAX(".$tabelle."ID) from ".$tabelle;
-		$result=mysqli_query($verbindung, $sql);
-		$maxID=mysqli_result($result,0,0);
-		$maxID=$maxID+1;
-
-		$sql="insert into my_table(id, field1) values('$max','$this')";
-
-
-		$abfrage="INSERT INTO ".$tabelle." (".$tabelle.",".$tabelle."ID) VALUES (\"".$editNeuerWert."\",\"".$maxID."\")";
-//		echo $abfrage,"<br>";
-		mysqli_query($verbindung, $abfrage);
-		$abfrage="INSERT INTO ".$tabelle."Structure (father, son) VALUES (\"".$editNeuerWert."\", \"".$maxID."\")";
-//		echo $abfrage;
-		mysqli_query($verbindung, $abfrage);
+		$abfrage="INSERT INTO ".$tabelle." (".$tabelle.") VALUES (\"".$editNeuerWert."\")";
+		//echo $abfrage;
+		mysql_query($abfrage);
 	}
 	
 	
@@ -154,7 +128,7 @@
 	        </li>
 		</ul>
 		<ul class="right">
-			<a class="button secondary round" href="sub_verwalte_auswahlStruktur.php" data-reveal-id="eingabeModal"><i class="fi-page-add"></i> neuer Eintrag</a>
+			<a class="button secondary round" href="sub_verwalte_auswahl.php" data-reveal-id="eingabeModal"><i class="fi-page-add"></i> neuer Eintrag</a>
 		</ul>
 		
 	</section>
@@ -166,7 +140,7 @@
 		<?php
 			echo "<legend>".$tabellenBeschreibung."</legend>";
 		?>
-		<form action="sub_verwalte_auswahlStruktur.php" method="get">
+		<form action="sub_verwalte_auswahl.php" method="get">
 			<?php
 				echo "<input type=\"hidden\" name=\"editStatus\" value=\"".$editStatus."\">";
 				echo "<input type=\"hidden\" name=\"tabelle\" value=\"".$tabelle."\"\>";
@@ -189,12 +163,12 @@
 		<dl class="sub-nav">
 			<?php
 				if($editStatus==0){
-	  				echo "<dd class=\"active\"><a href=\"sub_verwalte_auswahlStruktur.php?suchWert=".$suchWert."&editStatus=0&tabelle=".$tabelle."\">Show</a></dd>";
-  					echo "<dd><a href=\"sub_verwalte_auswahlStruktur.php?suchWert=".$suchWert."&editStatus=1&tabelle=".$tabelle."\">Edit</a></dd>";
+	  				echo "<dd class=\"active\"><a href=\"sub_verwalte_auswahl.php?suchWert=".$suchWert."&editStatus=0&tabelle=".$tabelle."\">Show</a></dd>";
+  					echo "<dd><a href=\"sub_verwalte_auswahl.php?suchWert=".$suchWert."&editStatus=1&tabelle=".$tabelle."\">Edit</a></dd>";
 				}
 				else {
-	  				echo "<dd><a href=\"sub_verwalte_auswahlStruktur.php?suchWert=".$suchWert."&editStatus=0&tabelle=".$tabelle."\">Show</a></dd>";
-  					echo "<dd class=\"active\"><a href=\"sub_verwalte_auswahlStruktur.php?suchWert=".$suchWert."&editStatus=1&tabelle=".$tabelle."\">Edit</a></dd>";
+	  				echo "<dd><a href=\"sub_verwalte_auswahl.php?suchWert=".$suchWert."&editStatus=0&tabelle=".$tabelle."\">Show</a></dd>";
+  					echo "<dd class=\"active\"><a href=\"sub_verwalte_auswahl.php?suchWert=".$suchWert."&editStatus=1&tabelle=".$tabelle."\">Edit</a></dd>";
 				}
 			?>
 		</dl>		
@@ -206,53 +180,45 @@
 	<div class="small-2 large-2 columns">	
 		<h2>ID</h2>
 	</div>
-	<div class="small-2 large-2 columns">	
-		<h2>Vater</h2>
-	</div>
-	<div class="small-8 large-8 columns">	
+	<div class="small-10 large-10 columns">	
 		<h2>Wert</h2>
 	</div>
 	<hr>
 </div>
 
 <?php
-	$auswahlX=array();
-//	print_r($auswahlX);
-	if($editStatus==0){
-		generateListOrdnerAenderung(0,"",$tabelle,0,true);
-		foreach ($auswahlX as $i => $value)
+	$spalteX=$tabelle."ID";
+	$abfrage="
+		SELECT DISTINCT ".$spalteX.",".$tabelle."
+		FROM ".$tabelle."
+		WHERE ".$tabelle." LIKE \"".$suchWert."\"
+		ORDER BY upper(".$tabelle.")
+	";
+	$ergebnis = mysql_query($verbindung, $abfrage);
+	if($editStatus==0){							
+		while($row = mysql_fetch_object($ergebnis))
 		{
-			$ordner=explode("|", $value);
 			echo "<div class=\"row collapse\">";
-				echo "<div class=\"small-2 large-2 columns\">";
-					echo "<p>",$ordner[0],"</p>";
+				echo "<div class=\"small-1 large-1 columns\">";
+					echo "<p>",$row->$spalteX,"</p>";
 				echo "</div>";
-				echo "<div class=\"small-2 large-2 columns\">";
-					echo "<p>",$ordner[1],"</p>";
-				echo "</div>";
-				echo "<div class=\"small- large-8 columns\">";
-					echo "<p>",$ordner[2],"</p>";
+				echo "<div class=\"small-11 large-11 columns\">";
+					echo "<p>",$row->$tabelle,"</p>";
 				echo "</div>";
 			echo "</div>";
 		}
 	} else {
-		generateListOrdnerAenderung(0,"",$tabelle,0,false);
-		foreach ($auswahlX as $i => $value) {
-			$ordner=explode("|", $value);
+		while($row = mysql_fetch_object($ergebnis)) {
 			echo "<div class=\"row collapse\">";
-				echo "<form class=\"custom\" action=\"sub_verwalte_auswahlStruktur.php\" method=\"get\">";
-					echo "<input type=\"hidden\" name=\"id\" value=\"".$ordner[0]."\"\>";
-					echo "<input type=\"hidden\" name=\"idFatherOrig\" value=\"".$ordner[1]."\"\>";
+				echo "<form class=\"custom\" action=\"sub_verwalte_auswahl.php\" method=\"get\">";
+					echo "<input type=\"hidden\" name=\"id\" value=\"".$row->$spalteX."\"\>";
 					echo "<input type=\"hidden\" name=\"editStatus\" value=\"1\">";
 					echo "<input type=\"hidden\" name=\"tabelle\" value=\"".$tabelle."\"\>";
 					echo "<div class=\"small-2 large-2 columns\">";
-						echo "<p>",$ordner[0],"</p>";
+						echo "<p>",$row->$spalteX,"</p>";
 					echo "</div>";
-					echo "<div class=\"small-2 large-2 columns\">";
-						echo "<input type=\"text\" value=\"",$ordner[1],"\" name=\"editWertID\">";
-					echo "</div>";
-					echo "<div class=\"small-2 large-2 columns\">";
-						echo "<input type=\"text\" value=\"",$ordner[2],"\" name=\"editWert\">";
+					echo "<div class=\"small-4 large-4 columns\">";
+						echo "<input type=\"text\" value=\"",$row->$tabelle,"\" name=\"editWert\">";
 					echo "</div>";
 					echo "<div class=\"small-6 large-6 columns\">";
 						echo "<button class=\"fi-page-edit secondary size-X\" name=\"updateStatus\" value=\"1\" type=\"submit\"></button>";
@@ -270,7 +236,7 @@
 		<?php
 			echo "<legend>Eingabeformular - ".$tabellenBeschreibung."</legend>"
 		?>			
-		<form action="sub_verwalte_auswahlStruktur.php" method="GET" class="custom">
+		<form action="sub_verwalte_auswahl.php" method="GET" class="custom">
 			<div class="row collapse">
 				<div class="small-12 large-12 columns">
 					<?php
@@ -294,7 +260,7 @@
 
 
 <?php
-	mysqli_close($verbindung);
+	mysql_close($verbindung);
 ?>
 
   <script src="js/vendor/jquery.js"></script>

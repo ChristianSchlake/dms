@@ -46,11 +46,11 @@
 							echo $spaltenBreiteNeuesDokumentFormular[$i];
 								$b=chr(64+$spaltenID[$i]);
 								$abfrage="SELECT DISTINCT ".$spaltenName[$i].",".$spaltenName[$i]."ID FROM ".$spaltenName[$i]." ORDER BY upper(".$spaltenName[$i].")";
-								$ergebnis = mysqli_query($verbindung, $abfrage);
+								$ergebnis = mysql_query($abfrage);
 								$spalteX=$spaltenName[$i]."ID";
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";				
 								echo "<select class=\"medium\" name=\"".$spaltenName[$i]."ADD\">";
-									while($row = mysqli_fetch_object($ergebnis)) {
+									while($row = mysql_fetch_object($ergebnis)) {
 										if ($row->$spalteX==$eingabeWert) {
 											echo "<option selected value=".$row->$spalteX.">",$row->$spaltenName[$i],"</option>";									
 										} else {						

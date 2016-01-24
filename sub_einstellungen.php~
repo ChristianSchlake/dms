@@ -74,7 +74,7 @@
 	if ($updateStatus==1) {
 		$abfrage=substr($abfrage,1);
 		$abfrage="UPDATE typenDefinition SET ".$abfrage." WHERE id=\"".$id."\"";
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 	}	
 ?>
 
@@ -140,7 +140,7 @@
 
 		<?php
 			$abfrage="SELECT DISTINCT * FROM typenDefinition WHERE reihenfolge < 99 ORDER BY reihenfolge";
-			$ergebnis = mysqli_query($verbindung, $abfrage);
+			$ergebnis = mysql_query($abfrage);
 			if($editStatus==0){
 				while($row = mysql_fetch_object($ergebnis))
 				{

@@ -21,7 +21,7 @@
 		";
 		$ergebnis = mysqli_query($verbindung, $abfrage);
 		$spacer=str_repeat("&nbsp;",8*$stufe);
-		while($row = mysqli_fetch_object($ergebnis)) {
+		while($row = mysql_fetch_object($ergebnis)) {
 			$abfrage_sohn="
 				SELECT DISTINCT
 					a.son,
@@ -65,7 +65,7 @@
 		} else {
 			$spacer="";
 		}
-		while($row = mysqli_fetch_object($ergebnis)) {
+		while($row = mysql_fetch_object($ergebnis)) {
 			$abfrage_sohn="
 				SELECT DISTINCT *
 				FROM ".$tabelle."Structure AS a
@@ -93,7 +93,7 @@
 			FROM ".$tabelle."
 		";
 		$ergebnis = mysqli_query($verbindung, $abfrage);
-		while($row = mysqli_fetch_object($ergebnis)) {
+		while($row = mysql_fetch_object($ergebnis)) {
 			$id=$tabelle."ID";
 			$father="";
 			$son=$row->$id;
@@ -117,7 +117,7 @@
 		";
 //		echo "abfrage: ",$abfrage;
 		$ergebnis = mysqli_query($verbindung, $abfrage);
-		while($row = mysqli_fetch_object($ergebnis)) {
+		while($row = mysql_fetch_object($ergebnis)) {
 			$abfrage_sohn="
 				SELECT DISTINCT
 					a.son,
@@ -160,7 +160,7 @@
 		$editStatus=abfrageEinstellung("editStatus");
 		// Spalten ermitteln
 		$result = mysqli_query($verbindung, "SELECT * FROM typenDefinition ORDER BY reihenfolge");
-		while ($row = mysqli_fetch_object($result)) {
+		while ($row = mysql_fetch_object($result)) {
 			$spaltenName[]=$row->name;
 			$spaltenTyp[]=$row->typ;
 			$spaltenBeschreibung[]=$row->beschreibung;
@@ -251,7 +251,7 @@
 			where a.father = $root_id
 		";
 		$ergebnis = mysqli_query($verbindung, $abfrage);
-		while($row = mysqli_fetch_object($ergebnis)) {
+		while($row = mysql_fetch_object($ergebnis)) {
 			$abrage_sohn="
 				SELECT DISTINCT
 					a.son,
@@ -280,7 +280,7 @@
 		global $verbindung;
 		$abfrage="SELECT DISTINCT * FROM typenDefinition WHERE name='".$einstellung."' ORDER BY reihenfolge";
 		$ergebnis = mysqli_query($verbindung, $abfrage);
-		while($row = mysqli_fetch_object($ergebnis)) {
+		while($row = mysql_fetch_object($ergebnis)) {
 			$result=$row->suchwert;
 		}
 		return $result;
@@ -289,7 +289,7 @@
 		global $verbindung;
 		$abfrage="SELECT DISTINCT * FROM typenDefinition WHERE name='".$einstellung."' ORDER BY reihenfolge";
 		$ergebnis = mysqli_query($verbindung, $abfrage);
-		while($row = mysqli_fetch_object($ergebnis)) {
+		while($row = mysql_fetch_object($ergebnis)) {
 			$result=$row->eingabewert;
 		}
 		return $result;

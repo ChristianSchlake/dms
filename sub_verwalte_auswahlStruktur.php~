@@ -88,25 +88,25 @@
 	}
 	if ($updateStatus==1) {
 		$abfrage="UPDATE ".$tabelle." SET ".$tabelle." =\"".$editWert."\" WHERE ".$tabelle."ID=\"".$updateID."\"";
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 //		echo $abfrage,"<br>";
 		$abfrage="UPDATE ".$tabelle."Structure SET father=\"".$editWertID."\" WHERE son=\"".$updateID."\"";
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 //		echo $abfrage;
 	}
 
 	if ($deleteStatus==1) {
 		$abfrage="DELETE FROM ".$tabelle." WHERE ".$tabelle."ID=\"".$updateID."\"";
 //		echo $abfrage,"<br>";
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 		$abfrage="DELETE FROM ".$tabelle."Structure WHERE son=\"".$updateID."\" and father=\"".$idFatherOrig."\"";
 //		echo $abfrage;
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 	}
 	if ($editNeuerWert!="") {
 		$sql="select MAX(".$tabelle."ID) from ".$tabelle;
-		$result=mysqli_query($verbindung, $sql);
-		$maxID=mysqli_result($result,0,0);
+		$result=mysql_query($sql);
+		$maxID=mysql_result($result,0,0);
 		$maxID=$maxID+1;
 
 		$sql="insert into my_table(id, field1) values('$max','$this')";
@@ -114,10 +114,10 @@
 
 		$abfrage="INSERT INTO ".$tabelle." (".$tabelle.",".$tabelle."ID) VALUES (\"".$editNeuerWert."\",\"".$maxID."\")";
 //		echo $abfrage,"<br>";
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 		$abfrage="INSERT INTO ".$tabelle."Structure (father, son) VALUES (\"".$editNeuerWert."\", \"".$maxID."\")";
 //		echo $abfrage;
-		mysqli_query($verbindung, $abfrage);
+		mysql_query($abfrage);
 	}
 	
 	
@@ -294,7 +294,7 @@
 
 
 <?php
-	mysqli_close($verbindung);
+	mysql_close($verbindung);
 ?>
 
   <script src="js/vendor/jquery.js"></script>

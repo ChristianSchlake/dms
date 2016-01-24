@@ -81,17 +81,17 @@
 	}
 	if ($updateStatus==1) {
 		$abfrage="UPDATE ".$tabelle." SET ".$tabelle." =\"".$editWert."\" WHERE ".$tabelle."ID=\"".$updateID."\"";
-		mysql_query($abfrage);
+		mysqli_query($verbindung, $abfrage);
 	}
 
 	if ($deleteStatus==1) {
 		$abfrage="DELETE FROM ".$tabelle." WHERE ".$tabelle."ID=\"".$updateID."\"";
-		mysql_query($abfrage);
+		mysqli_query($verbindung, $abfrage);
 	}
 	if ($editNeuerWert!="") {
 		$abfrage="INSERT INTO ".$tabelle." (".$tabelle.") VALUES (\"".$editNeuerWert."\")";
 		//echo $abfrage;
-		mysql_query($abfrage);
+		mysqli_query($verbindung, $abfrage);
 	}
 	
 	
@@ -194,7 +194,7 @@
 		WHERE ".$tabelle." LIKE \"".$suchWert."\"
 		ORDER BY upper(".$tabelle.")
 	";
-	$ergebnis = mysql_query($abfrage);
+	$ergebnis = mysqli_query($verbindung, $verbindung, $abfrage);
 	if($editStatus==0){							
 		while($row = mysql_fetch_object($ergebnis))
 		{

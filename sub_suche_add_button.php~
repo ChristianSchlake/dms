@@ -87,6 +87,7 @@
 							echo $spaltenBreiteSuchFormular[$i];
 								$b=chr(64+$spaltenID[$i]);
 								$abfrage="SELECT DISTINCT ".$b.".".$spaltenName[$i].",".$b.".".$spaltenName[$i]."ID".$abfrageTMP." ORDER BY upper(".$b.".".$spaltenName[$i].")";
+								echo $abfrage;
 								$ergebnis = mysqli_query($verbindung, $abfrage);
 								$spalteX=$spaltenName[$i]."ID";
 								echo "<label>".$spaltenBeschreibung[$i]."</label>";				
